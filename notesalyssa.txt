@@ -1,0 +1,8 @@
+ideas
+- natural disasters
+	- main: How do natural disasters affect health?
+	- follow ups: 
+		- what kinds of people have been most affected by natural disasters (eg income level, house type (like beachfront vs more inland), etc)?
+		- what natural disasters/most common natural disasters?
+		- what were the effects/most common effects?
+		- if you live in a rural area with less resources are you worse off?
