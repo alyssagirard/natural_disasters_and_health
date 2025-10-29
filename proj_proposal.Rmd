@@ -1,0 +1,12 @@
+---
+title: "Project Proposal"
+author: "Kaya Williams, Akillesh Suresh, Alyssa Girard"
+date: "2025-10-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE,
+                      warning = FALSE)
+```
