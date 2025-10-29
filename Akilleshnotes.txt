@@ -1,0 +1,5 @@
+Number of recorded natural disaster events, 1900 to 2023
+The number of global reported natural disaster events in any given year. Note that this largely reflects increases in data
+reporting, and should not be used to assess the total number of events.
+
+Turns out that the number of natural disaster events are only growing.
