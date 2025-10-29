@@ -3,3 +3,11 @@ The number of global reported natural disaster events in any given year. Note th
 reporting, and should not be used to assess the total number of events.
 
 Turns out that the number of natural disaster events are only growing.
+
+The chart that shows the Annual number of deaths from diasters has changed over time. In the early 1900s-1940s the average death from natural diasters was around 400k to 500k people dying a year. In the 1950s-1960s you see that they are still pretty high but it starting to dip. Then in the 1970s there was a massive drop staying under 100k per year since around the 1980s. While in the 2000s even though we have been having frequent disasters (due to climate change) deaths have remain relatively low compared to the early 20th century. 
+
+This change was probably due to Better warning systems including satellites, radar, and forecasting which has been warning people ahead of time. It is also cause of improved infastructure, medical + technological advances as well as faster communication and response.
+
+With that in the chart showing how death rates from natural disasters relates to GDP per capita. There is a correlation as GDP per capita increases, deaths from disasters generally decrease. Basically wealthier countries have far lower disaster death rates. In the clusters you can see that poorer, low income nations like Haiti, Ethiopia, Afghanistan sit left with higher death rates, while richer nations like Japan, France, South Korea, and Australia are far to the right with very low death rates.
+
+This probably happens because they have the resources to react to the natural disasters and have better healthcare and infrastructure in place. 
