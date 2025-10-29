@@ -1,3 +1,9 @@
+- first assignment create proposal
+- come up w project idea
+- instructions in project overview
+- find datasets
+
+
 ideas
 - natural disasters
 	- main: How do natural disasters affect health?
@@ -6,3 +12,5 @@ ideas
 		- what natural disasters/most common natural disasters?
 		- what were the effects/most common effects?
 		- if you live in a rural area with less resources are you worse off?
+		- what disease uptick after a natural disaster?
+		- what kind of diseases are in a natural disaster?
