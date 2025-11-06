@@ -14,3 +14,5 @@ ideas
 		- if you live in a rural area with less resources are you worse off?
 		- what disease uptick after a natural disaster?
 		- what kind of diseases are in a natural disaster?
+
+- https://www.newyorkfed.org/research/policy/natural-disaster-losses/#interactive

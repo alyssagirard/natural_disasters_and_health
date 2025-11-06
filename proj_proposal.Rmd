@@ -1,8 +1,10 @@
 ---
-title: "Project Proposal"
-author: "Kaya Williams, Akillesh Suresh, Alyssa Girard"
+title: "Final Project Proposal"
+author: "Team 4: Kaya Williams, Akillesh Suresh, Alyssa Girard"
 date: "2025-10-29"
-output: html_document
+output: 
+  html_document:
+    theme: cerulean
 ---
 
 ```{r setup, include=FALSE}
@@ -12,37 +14,61 @@ knitr::opts_chunk$set(echo = TRUE,
 library(tidyverse)
 library(here)
 ```
-
-
-### Final Project
-
-## How Do Natural Disasters Affect Human Health?
-
-# Follow Up Questions
-- What kinds of people have been most affected by natural disasters?
-- What diseases see an uptick in cases after a natural disaster?
-- What were the most common effects?
-- Do certain natural disasters cause more diseases than others?
-
+# How Do Natural Disasters Affect Human Health in the United States?
+## Follow Up Questions
+- What disasters cause people to require the most assistance?
+- What regions have been most affected by natural disasters?
+- Do respiratory and gastrointestinal diseases see an uptick in cases after a natural disaster?
+- What disasters cause the highest rates of homelessness?
+- How much do natural disasters affect the U.S. economy?
 
 ## Data and Data Sources
+### Natural Disasters: Our World in Data
+- Our first data source is from Our World in Data's Natural Disasters dataset
+- It contains data from multiple types of disasters and impacts (e.g., deaths, injuries, homeless, et cetera) and the year the disaster occurred.
+- We believe this data source is valid, because Our World In Data gets their data from valid sources, listed on their website as "international institutions and statistical agencies, such as the OECD, the World Bank, the WHO, and UN institutions, specialized institutes and think tanks, such as the Peace Research Institute Oslo (PRIO), academic research articles, such as Bourguignon & Morrison (2002) ’Inequality Among World Citizens: 1820-1992’ in the American Economic Review, and official data from government sources."
+- Link: https://ourworldindata.org/natural-disasters#explore-data-on-natural-disasters
 
+### Losses from Natural Disasters: Federal Reserve Bank of New York
+- Our second data source is the Federal Reserve Bank of New York's Losses from Natural Disasters, which describes the direct damages from natural disasters across the United States by county.
+- We believe this data source is valid because it is from a federal resource, specifically the Federal Reserve Bank of New York.
+- Link: https://www.newyorkfed.org/research/policy/natural-disaster-losses/#interactive
+
+### A Weekly Influenza Surveillance Report: CDC
+- Our third data source is the CDC's Weekly Influenze Surveillance Report, which tracks the level of visits for respiratory illness.
+- We believe this source is valid because it comes directly from the Center of Disease Control, a government organization.
+- Link: https://gis.cdc.gov/grasp/fluview/main.html
 
 ## Anticipated Results
+### What disasters cause people to require the most assistance?
+  - Based on the data, we predict that floods will cause people to require the most assistance
+  - We will create a treemap comparing the disasters by number of people requiring assistance
+  
+### What regions have been most affected by natural disasters?
+  - We predict that the region most affected by natural disasters will be the Gulf of Mexico.
+  - We will create a heat map comparing number of natural disasters.
+  
+### Do respiratory and gastrointestinal diseases see an uptick in cases after a natural disaster?
+  - We predict that the respiratory and gastrointestinal diseases see an uptick in cases after natural disasters.
+  - We will make a scatterplot comparing numbers and types of disease by year.
+  
+### What disasters cause the highest rates of homelessness?
+- We predict that the disaster that causes the highest rates of homelessness is floods or wildfires.
+- We will create a histogram comparing the disasters by homelessness rates.
 
+### How much do natural disasters affect the U.S. economy?
+- We predict that natural disasters do decent damage to the U.S. economy, especially for disasters that cause a lot of structural damage such as floods or tornadoes.
+- We will create a line chart comparing GDP rates after different natural disasters by year.
 
 ## Member Contributions
-
-# Kaya Williams
+### Kaya Williams
  - Found data sources
- - Contributed to proposal document
+ - Contributed to proposal document via Discord call
 
-# Akillesh Suresh
+### Akillesh Suresh
  - Found data sources
- - Contributed to proposal document
+ - Contributed to proposal document via Discord call
  
-# Alyssa Girard
+### Alyssa Girard
  - Found data sources
- - Contributed to proposal document
-
-
+ - Contributed to proposal document via Discord call
