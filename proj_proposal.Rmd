@@ -9,11 +9,40 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE, 
                       message = FALSE,
                       warning = FALSE)
-
-#hiiiii
-#hellooooo
-#ksdhfkljahsdf
-#test
+library(tidyverse)
+library(here)
 ```
+
+
+### Final Project
+
+## How Do Natural Disasters Affect Human Health?
+
+# Follow Up Questions
+- What kinds of people have been most affected by natural disasters?
+- What diseases see an uptick in cases after a natural disaster?
+- What were the most common effects?
+- Do certain natural disasters cause more diseases than others?
+
+
+## Data and Data Sources
+
+
+## Anticipated Results
+
+
+## Member Contributions
+
+# Kaya Williams
+ - Found data sources
+ - Contributed to proposal document
+
+# Akillesh Suresh
+ - Found data sources
+ - Contributed to proposal document
+ 
+# Alyssa Girard
+ - Found data sources
+ - Contributed to proposal document
 
 
