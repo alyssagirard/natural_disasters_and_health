@@ -1,0 +1,41 @@
+---
+title: "Captia"
+author: "Akillesh Suresh"
+date: "2025-11-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(here)
+
+losses <- read_csv(here("data/NYFed_natural-disasters_download_data/lnd_full_clean_2024-12-31.csv"))
+
+losses <- losses %>%
+  mutate(year = as.numeric(year))
+
+selected_losses <- losses %>%
+  filter(event_type %in% c("Hurricane", "Flood", "Tornado", "Wildfire"))
+```
+
+```{r}
+ggplot(selected_losses, aes(x = year, y = loss_amount,
+                            color = event_type, group = event_type)) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Economic Losses Over Time by Natural Disaster Type",
+    x = "Year",
+    y = "Estimated Loss (USD)",
+    color = "Disaster Type"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(size = 14)
+  )
+```
