@@ -1,0 +1,48 @@
+---
+title: "How Do Hurricanes, Wildfires, and Floods Affect Human Welfare in the United States?"
+author: "Kaya Williams, Akillesh Suresh, Alyssa Girard"
+date: "2025-11-21"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE,
+                      warning = FALSE)
+library(tidyverse)
+library(here)
+```
+
+## Research Question
+
+
+## Data Sources
+
+
+## Evaluating Our Proposal Expectations
+
+
+## Preliminary Charts
+
+### Do respiratory symptoms see an uptick after natural disasters?
+
+### How much do natural disasters affect the U.S. economy?
+
+### What regions have been most affected by natural disasters?
+
+### What disasters cause the most deaths?
+
+### What disasters cause the highest rates of homelessness?
+
+
+## Member Contributions
+### Kaya Williams
+ - Do respiratory symptoms see an uptick after natural disasters?
+ - How much do natural disasters affect the U.S. economy? (Or whoever has time)
+ 
+### Akillesh Suresh
+ - What regions have been most affected by natural disasters?
+
+### Alyssa Girard
+ - What disasters cause the most deaths?
+ - What disasters cause the highest rates of homelessness?
