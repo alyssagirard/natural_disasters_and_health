@@ -14,7 +14,7 @@ library(here)
 ```
 
 
-
+https://ourworldindata.org/grapher/number-homeless-from-natural-disasters?tab=table
 
 ## What disasters cause the most deaths?
  
@@ -27,4 +27,12 @@ deaths_usa <- deaths %>%
 ```
 
  - What disasters cause the highest rates of homelessness?
+```{r}
+homeless <- read_csv(here("data/homeless_by_disaster/number-homeless-from-natural-disasters.csv"))
+total_homeless <- read_csv(here("data/our_world-usa/number-homeless.csv"))
+
+total_usa_homeless <- total_homeless %>%
+  filter(total_homeless$`Country name` == "United States")
+```
+ 
  
