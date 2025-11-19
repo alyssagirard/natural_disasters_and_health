@@ -1,0 +1,30 @@
+---
+title: "placeholder report"
+author: "Alyssa Girard"
+date: "2025-11-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, 
+                      message = FALSE,
+                      warning = FALSE)
+library(tidyverse)
+library(here)
+```
+
+
+
+
+## What disasters cause the most deaths?
+ 
+```{r}
+# import data
+deaths <- read_csv(here("data/our_world-usa/number-of-deaths-by-disaster.csv"))
+
+deaths_usa <- deaths %>%
+  filter(Entity == "United States")
+```
+
+ - What disasters cause the highest rates of homelessness?
+ 
