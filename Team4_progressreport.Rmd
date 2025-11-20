@@ -11,38 +11,329 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE)
 library(tidyverse)
 library(here)
+library(treemapify)
+library(dplyr)
+library(ggpmisc)
+library(ggplot2)
+library(tigris)
+library(viridis)
+library(scales)
+library(grid)
+library(sf)
 ```
 
-## Research Question
-
-
 ## Data Sources
+### Natural Disasters: Our World in Data
+- Our first data source is from Our World in Data's Natural Disasters dataset
+- It contains data from multiple types of disasters and impacts (e.g., deaths, injuries, homeless, et cetera) and the year the disaster occurred.
+- We believe this data source is valid, because Our World In Data gets their data from valid sources, listed on their website as "international institutions and statistical agencies, such as the OECD, the World Bank, the WHO, and UN institutions, specialized institutes and think tanks, such as the Peace Research Institute Oslo (PRIO), academic research articles, such as Bourguignon & Morrison (2002) ’Inequality Among World Citizens: 1820-1992’ in the American Economic Review, and official data from government sources."
+- Link: https://ourworldindata.org/natural-disasters#explore-data-on-natural-disasters
+
+### Losses from Natural Disasters: Federal Reserve Bank of New York
+- Our second data source is the Federal Reserve Bank of New York's Losses from Natural Disasters, which describes the direct damages from natural disasters across the United States by county.
+- We believe this data source is valid because it is from a federal resource, specifically the Federal Reserve Bank of New York.
+- Link: https://www.newyorkfed.org/research/policy/natural-disaster-losses/#interactive
+
+### A Weekly Influenza Surveillance Report: CDC
+- Our third data source is the CDC's Weekly Influenze Surveillance Report, which tracks the level of visits for respiratory illness.
+- We believe this source is valid because it comes directly from the Center of Disease Control, a government organization.
+- Link: https://gis.cdc.gov/grasp/fluview/main.html
 
 
 ## Evaluating Our Proposal Expectations
 
 
+
+
 ## Preliminary Charts
 
 ### Do respiratory symptoms see an uptick after natural disasters?
+```{r}
+nc<- read_csv(here("data/OverallCounts_tidy.csv"))
+
+
+nc<- nc[31:52,]
+
+nc <- nc %>% 
+  rename(`Covid_like_illness` = "COVID-like Illness",
+         `RSV_like_illness` = "RSV-like Illness") %>% 
+  separate(Week_of, c("Date","Year"), sep = ',') %>% 
+  mutate(total = Covid_like_illness + RSV_like_illness + Influenza) %>% 
+  select(-2)
+
+nc$Date <- as.character(nc$Date)
+nc$Date <- factor(nc$Date, levels=unique(nc$Date))
+
+```
+```{r, hurricane helene graph, total}
+
+
+helene_illness <- ggplot(data = nc, aes(x = Date, y = total))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "North Carolina Respitory Illness Trends in 2024")
+
+helene_illness
+
+helene_illness + annotate("rect", xmin = "September 21", xmax = "October 5", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "red") +
+  annotate("rect", xmin = "October 5", xmax = "October 19", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "blue")+
+  annotate("rect", xmin = "October 19", xmax = "November 2", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "green")
+  
+```
+```{r, helene by illness}
+
+nc_pivot <- nc %>% 
+  pivot_longer(2:4,
+               names_to = "Illness",
+               values_to = "Count") %>% 
+  select(-total)
+
+
+
+(helene_by_illness <- ggplot(data = nc_pivot, aes(x = Date, y = Count, color = Illness))+
+  geom_point(size = 1, na.rm = T)+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "North Carolina Respitory Illness Trends in 2024")) 
+
+helene_by_illness
+
+helene_by_illness + annotate("rect", xmin = "September 21", xmax = "September 28", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "red") +
+  annotate("rect", xmin = "September 28", xmax = "October 12", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "blue")+
+  annotate("rect", xmin = "October 12", xmax = "October 26", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "green")
+
+```
+```{r}
+LA <- read_csv(here("data/CSV_LA_COVID_TESTBYWEEK_TRACT_PUBLICUSE.csv"))
+
+LA$Date_start_week <- as.character(LA$Date_start_week)
+LA$Date_start_week <- factor(LA$Date_start_week, levels=unique(LA$Date_start_week))
+
+
+LA <- LA %>% 
+  filter(str_ends(Date_start_week, "/20")) #%>%
+  #filter(!str_starts(Date_start_week, "1")) %>% 
+  # filter(!str_starts(Date_start_week, "2")) %>% 
+  # filter(!str_starts(Date_start_week, "3")) %>% 
+  # filter(!str_starts(Date_start_week, "4")) %>% 
+  # filter(!str_starts(Date_start_week, "5")) %>% 
+  # select(-2,-3,-6,-7,-8) 
+
+
+LA<- LA %>% 
+  group_by(Date_start_week) %>% 
+  summarise(Count_total = sum(Weekly_Case_Count))
+
+
+
+LA_graph <- ggplot(data = LA, aes(x = Date_start_week, y = Count_total))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "Louisiana Respitory Illness Trends in 2020")
+
+LA_graph 
+LA_graph_annotated <- LA_graph + annotate("rect", xmin = "8/27/20", xmax = "9/3/20", ymin = 0, ymax = 25000,
+             alpha = 0.3, fill = "red") +
+  annotate("rect", xmin = "9/3/20", xmax = "9/10/20", ymin = 0, ymax = 25000,
+             alpha = 0.3, fill = "green")
+
+
+LA_graph_annotated
+```
 
 ### How much do natural disasters affect the U.S. economy?
+Note: Our original CSV file was too big to upload to Canvas, so we created a CSV file with the original code and used that. Original code noted below:
 
-### What regions have been most affected by natural disasters?
+```
+losses <- read_csv(here("C:/Users/alyss/OneDrive/Documents/math268/data/lnd_full_clean_2024-12-31.csv"))
+
+losses <- losses %>%
+  mutate(year = as.numeric(year))
+
+selected_losses <- losses %>%
+  filter(event_type %in% c("Hurricane", "Flood", "Tornado", "Wildfire"))
+```
+
+```{r}
+library(tidyverse)
+library(here)
+
+losses <- read_csv(here("data/NYFed_natural-disasters_download_data/lnd_full_clean_2024-12-31.csv"))
+
+losses <- losses %>%
+  mutate(year = as.numeric(year))
+
+selected_losses <- losses %>%
+  filter(event_type %in% c("Hurricane", "Flood", "Tornado", "Wildfire"))
+```
+
+```{r}
+ggplot(selected_losses, aes(x = year, y = loss_amount,
+                            color = event_type, group = event_type)) +
+  geom_line(linewidth = 1.1) +
+  geom_point(size = 2) +
+  labs(
+    title = "Economic Losses Over Time by Natural Disaster Type",
+    x = "Year",
+    y = "Estimated Loss (USD)",
+    color = "Disaster Type"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold", size = 16),
+    axis.title = element_text(size = 14)
+  )
+```
+
+### Which U.S. regions experience the highest economic losses from natural disasters?
+
+```{r}
+losses <- read_csv(here("data/NYFed_natural-disasters_download_data/lnd_full_clean_2024-12-31.csv"))
+
+losses <- losses %>%
+  mutate(fips = str_pad(fips, width = 5, side = "left", pad = "0")) %>%
+  filter(damages_total_adj > 0)
+
+major_types <- c(
+  "Flood", "Flash Flood", "Hurricane", "Tropical Storm",
+  "Storm Surge/Tide", "Tornado", "Wildfire", "High Wind",
+  "Winter Storm", "Thunderstorm Wind"
+)
+
+losses_major <- losses %>%
+  filter(event_type %in% major_types)
+
+# NEW: Damage aggregation
+county_damage <- losses_major %>%
+  group_by(fips) %>%
+  summarize(total_damage = sum(damages_total_adj, na.rm = TRUE))
+
+map_data <- counties %>%
+  left_join(county_damage, by = c("GEOID" = "fips"))
+
+map_data$total_damage[is.na(map_data$total_damage)] <- 0
+
+```
+
+```{r, fig.width=14, fig.height=10}
+ggplot(map_data) +
+  geom_sf(aes(fill = total_damage), color = NA) +
+  scale_fill_viridis_c(
+    option = "A",
+    trans = "log10",
+    labels = scales::label_number(
+      accuracy = 0.1,
+      scale_cut = scales::cut_short_scale()
+    )
+  ) +
+  labs(
+    title = "Total Natural Disaster Damage by County",
+    subtitle = "Cumulative inflation-adjusted damage from major hazard events",
+    fill = "Total Damage"
+  ) +
+  coord_sf(
+    xlim = c(-125, -65),
+    ylim = c(25, 50),
+    expand = FALSE
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    legend.position = "bottom",
+    legend.key.width = unit(4, "cm"),
+    legend.key.height = unit(0.7, "cm"),
+    panel.grid = element_blank()
+  )
+```
 
 ### What disasters cause the most deaths?
+```{r}
+# import data
+deaths <- read_csv(here("data/our_world-usa/number-of-deaths-by-disaster.csv"))
+
+deaths_usa <- deaths %>%
+  filter(Entity == "United States") %>%
+  select(Year,
+         `Deaths - Flood`,
+         `Deaths - Earthquake`,
+         `Deaths - Extreme weather`)
+
+long_data <- deaths_usa %>%
+  pivot_longer(cols = -Year, names_to = "Disaster", values_to = "Deaths") %>%
+  mutate(Deaths = ifelse(is.na(Deaths), 0, Deaths))
+
+total_data <- long_data %>%
+  group_by(Disaster) %>%
+  summarise(Total_Deaths = sum(Deaths))
+
+ggplot(total_data, aes(
+  area = Total_Deaths,
+  fill = Disaster,
+  label = paste0(Disaster, "\n", Total_Deaths)
+)) +
+  geom_treemap() +
+  geom_treemap_text(
+    colour = "white",
+    place = "centre",
+    grow = TRUE
+  ) +
+  scale_fill_manual(values = c(
+    "Deaths - Flood" = "blue",
+    "Deaths - Earthquake" = "red",
+    "Deaths - Extreme weather" = "orange"
+  )) +
+  labs(title = "Total Deaths by Disaster Type") +
+  theme(legend.position = "none")
+```
 
 ### What disasters cause the highest rates of homelessness?
+```{r}
+homeless <- read_csv(here("data/homeless_by_disaster/number-homeless-from-natural-disasters.csv"))
+
+three_types <- homeless %>%
+  group_by(Entity) %>%
+  summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%
+  filter(Entity %in% c("Extreme weather", "Flood", "Wildfire"))
+
+all_disasters <- homeless %>%
+  group_by(Entity) %>%
+  summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%
+  filter(Entity == "All disasters")
+
+ggplot(data = three_types,
+       aes(x = Entity, y = total_homeless / 1000))+
+  geom_bar(stat = "identity", fill = "blue") +
+  geom_text(aes(label = total_homeless/10000, vjust = -0.5, size = 1)) +
+  scale_y_continuous(limits = c(0, 125000)) +
+  labs(title = "",
+       x = "Type of Disaster",
+       y = " (in tens of thousands)")
+```
 
 
 ## Member Contributions
 ### Kaya Williams
- - Do respiratory symptoms see an uptick after natural disasters?
- - How much do natural disasters affect the U.S. economy? (Or whoever has time)
+ - Do respiratory symptoms see an uptick after natural disasters? charts
+ - Worked on progress report file
  
 ### Akillesh Suresh
- - What regions have been most affected by natural disasters?
+ - Which U.S. regions experience the highest economic losses from natural disasters? chart
+ - How much do natural disasters affect the U.S. economy? chart
+ - Worked on progress report file
 
 ### Alyssa Girard
- - What disasters cause the most deaths?
- - What disasters cause the highest rates of homelessness?
+ - What disasters cause the most deaths? chart
+ - What disasters cause the highest rates of homelessness? chart
+ - Worked on progress report file

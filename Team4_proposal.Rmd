@@ -13,6 +13,8 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE)
 library(tidyverse)
 library(here)
+library(treemapify)
+library(dplyr)
 ```
 # How Do Natural Disasters Affect Human Health in the United States?
 ## Follow Up Questions
