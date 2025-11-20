@@ -11,14 +11,15 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE)
 library(tidyverse)
 library(here)
-library(treemapify)
 library(dplyr)
+library(treemapify)
 library(ggpmisc)
 library(ggplot2)
 library(tigris)
 library(viridis)
 library(scales)
 library(grid)
+library(lubridate)
 library(sf)
 ```
 
@@ -157,36 +158,30 @@ LA_graph_annotated
 ### How much do natural disasters affect the U.S. economy?
 
 ```{r}
-library(tidyverse)
-library(here)
-library(tidyverse)
-library(sf)
-library(tigris)
-library(here)
-library(viridis)
-library(scales)
-library(grid)
-library(dplyr)
 
 losses <- read_csv(here("data/lnd_full_clean_2024-12-31.csv"))
-# Note: file is large so may take a minute to load in.
 
 losses <- losses %>%
-  mutate(year = as.numeric(year))
+  mutate(
+    begin_date = as.Date(begin_date),
+    year = year(begin_date)
+  )
 
 selected_losses <- losses %>%
   filter(event_type %in% c("Hurricane", "Flood", "Tornado", "Wildfire"))
 ```
 
 ```{r}
-ggplot(selected_losses, aes(x = year, y = loss_amount,
-                            color = event_type, group = event_type)) +
+ggplot(selected_losses, aes(x = year, 
+                            y = damages_total_adj,
+                            color = event_type, 
+                            group = event_type)) +
   geom_line(linewidth = 1.1) +
   geom_point(size = 2) +
   labs(
     title = "Economic Losses Over Time by Natural Disaster Type",
     x = "Year",
-    y = "Estimated Loss (USD)",
+    y = "Inflation-Adjusted Damage (USD)",
     color = "Disaster Type"
   ) +
   theme_minimal() +
@@ -301,7 +296,7 @@ ggplot(total_data, aes(
 
 ### What disasters cause the highest rates of homelessness?
 ```{r}
-homeless <- read_csv(here("data/homeless_by_disaster/number-homeless-from-natural-disasters.csv"))
+homeless <- read_csv(here("data/number-homeless-from-natural-disasters.csv"))
 
 three_types <- homeless %>%
   group_by(Entity) %>%
