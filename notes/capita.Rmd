@@ -1,0 +1,44 @@
+---
+title: "Captia"
+author: "Akillesh Suresh"
+date: "2025-11-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(here)
+
+losses <- read_csv(here("data/NYFed_natural-disasters_download_data/lnd_full_clean_2024-12-31.csv"))
+
+losses <- losses %>%
+  mutate(year = lubridate::year(begin_date))
+
+losses_yearly <- losses %>%
+  group_by(event_type, year) %>%
+  summarize(total_damage = sum(damages_total_adj, na.rm = TRUE)) %>%
+  arrange(event_type, year)
+
+major_disasters <- c("Hurricane", "Flood", "Tornado", "Wildfire", "Drought")
+
+losses_major <- losses_yearly %>%
+  filter(event_type %in% major_disasters)
+```
+
+```{r}
+ggplot(losses_major, aes(x = year, y = total_damage,
+                         color = event_type, group = event_type)) +
+  geom_smooth(se = FALSE, linewidth = 1.5) +
+  scale_y_log10(labels = scales::comma) +
+  labs(
+    title = "Trend in Inflation-Adjusted Disaster Losses (Log Scale)",
+    x = "Year",
+    y = "Total Damage (USD, Log Scale)",
+    color = "Disaster Type"
+  ) +
+  theme_minimal(base_size = 14)
+```
