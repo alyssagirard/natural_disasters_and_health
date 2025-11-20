@@ -17,7 +17,7 @@ library(ggpmisc)
 library(ggplot2)
 
 
-nc<- read_csv(here("Final Project/OverallCounts_tidy.csv"))
+nc<- read_csv(here("Final Project/data/OverallCounts_tidy.csv"))
 
 
 nc<- nc[31:52,]
@@ -89,7 +89,7 @@ helene_by_illness + annotate("rect", xmin = "September 21", xmax = "September 28
 # Louisiana Hurricane Francine
 
 ```{r}
-LA <- read_csv(here("Final Project/CSV_LA_COVID_TESTBYWEEK_TRACT_PUBLICUSE.csv"))
+LA <- read_csv(here("Final Project/data/CSV_LA_COVID_TESTBYWEEK_TRACT_PUBLICUSE.csv"))
 
 LA$Date_start_week <- as.character(LA$Date_start_week)
 LA$Date_start_week <- factor(LA$Date_start_week, levels=unique(LA$Date_start_week))
