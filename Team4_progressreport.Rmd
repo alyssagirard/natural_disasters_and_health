@@ -155,23 +155,21 @@ LA_graph_annotated
 ```
 
 ### How much do natural disasters affect the U.S. economy?
-Note: Our original CSV file was too big to upload to Canvas, so we created a CSV file with the original code and used that. Original code noted below:
-
-```
-losses <- read_csv(here("C:/Users/alyss/OneDrive/Documents/math268/data/lnd_full_clean_2024-12-31.csv"))
-
-losses <- losses %>%
-  mutate(year = as.numeric(year))
-
-selected_losses <- losses %>%
-  filter(event_type %in% c("Hurricane", "Flood", "Tornado", "Wildfire"))
-```
 
 ```{r}
 library(tidyverse)
 library(here)
+library(tidyverse)
+library(sf)
+library(tigris)
+library(here)
+library(viridis)
+library(scales)
+library(grid)
+library(dplyr)
 
-losses <- read_csv(here("data/NYFed_natural-disasters_download_data/lnd_full_clean_2024-12-31.csv"))
+losses <- read_csv(here("data/lnd_full_clean_2024-12-31.csv"))
+# Note: file is large so may take a minute to load in.
 
 losses <- losses %>%
   mutate(year = as.numeric(year))
@@ -201,7 +199,11 @@ ggplot(selected_losses, aes(x = year, y = loss_amount,
 ### Which U.S. regions experience the highest economic losses from natural disasters?
 
 ```{r}
-losses <- read_csv(here("data/NYFed_natural-disasters_download_data/lnd_full_clean_2024-12-31.csv"))
+options(tigris_use_cache = TRUE)
+
+counties <- counties(cb = TRUE, year = 2021)
+
+losses <- read_csv(here("data/lnd_full_clean_2024-12-31.csv"))
 
 losses <- losses %>%
   mutate(fips = str_pad(fips, width = 5, side = "left", pad = "0")) %>%
@@ -216,7 +218,6 @@ major_types <- c(
 losses_major <- losses %>%
   filter(event_type %in% major_types)
 
-# NEW: Damage aggregation
 county_damage <- losses_major %>%
   group_by(fips) %>%
   summarize(total_damage = sum(damages_total_adj, na.rm = TRUE))
@@ -261,7 +262,7 @@ ggplot(map_data) +
 ### What disasters cause the most deaths?
 ```{r}
 # import data
-deaths <- read_csv(here("data/our_world-usa/number-of-deaths-by-disaster.csv"))
+deaths <- read_csv(here("data/number-of-deaths-by-disaster.csv"))
 
 deaths_usa <- deaths %>%
   filter(Entity == "United States") %>%
