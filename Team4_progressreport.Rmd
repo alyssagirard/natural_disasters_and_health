@@ -66,6 +66,7 @@ nc$Date <- as.character(nc$Date)
 nc$Date <- factor(nc$Date, levels=unique(nc$Date))
 
 ```
+
 ```{r, hurricane helene graph, total}
 
 
@@ -79,14 +80,18 @@ helene_illness <- ggplot(data = nc, aes(x = Date, y = total))+
 
 helene_illness
 
-helene_illness + annotate("rect", xmin = "September 21", xmax = "October 5", ymin = 0, ymax = 12000,
+p1<- helene_illness + annotate("rect", xmin = "September 21", xmax = "October 5", ymin = 0, ymax = 12000,
              alpha = 0.3, fill = "red") +
   annotate("rect", xmin = "October 5", xmax = "October 19", ymin = 0, ymax = 12000,
              alpha = 0.3, fill = "blue")+
   annotate("rect", xmin = "October 19", xmax = "November 2", ymin = 0, ymax = 12000,
              alpha = 0.3, fill = "green")
-  
+
+p1  
 ```
+
+
+
 ```{r, helene by illness}
 
 nc_pivot <- nc %>% 
