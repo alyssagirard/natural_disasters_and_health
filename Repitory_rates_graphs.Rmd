@@ -1,0 +1,164 @@
+---
+title: "working_final proj"
+author: "Kaya Williams"
+date: "2025-11-19"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+library(dplyr)
+library(here)
+library(ggpmisc)
+library(ggplot2)
+
+
+nc<- read_csv(here("Final Project/OverallCounts_tidy.csv"))
+
+
+nc<- nc[31:52,]
+
+nc <- nc %>% 
+  rename(`Covid_like_illness` = "COVID-like Illness",
+         `RSV_like_illness` = "RSV-like Illness") %>% 
+  separate(Week_of, c("Date","Year"), sep = ',') %>% 
+  mutate(total = Covid_like_illness + RSV_like_illness + Influenza) %>% 
+  select(-2)
+
+nc$Date <- as.character(nc$Date)
+nc$Date <- factor(nc$Date, levels=unique(nc$Date))
+
+```
+
+
+```{r, hurricane helene graph, total}
+
+
+helene_illness <- ggplot(data = nc, aes(x = Date, y = total))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "North Carolina Respitory Illness Trends in 2024")
+
+helene_illness
+
+helene_illness + annotate("rect", xmin = "September 21", xmax = "October 5", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "red") +
+  annotate("rect", xmin = "October 5", xmax = "October 19", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "blue")+
+  annotate("rect", xmin = "October 19", xmax = "November 2", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "green")
+  
+```
+```{r, helene by illness}
+
+nc_pivot <- nc %>% 
+  pivot_longer(2:4,
+               names_to = "Illness",
+               values_to = "Count") %>% 
+  select(-total)
+
+
+
+(helene_by_illness <- ggplot(data = nc_pivot, aes(x = Date, y = Count, color = Illness))+
+  geom_point(size = 1, na.rm = T)+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "North Carolina Respitory Illness Trends in 2024")) 
+
+helene_by_illness
+
+helene_by_illness + annotate("rect", xmin = "September 21", xmax = "September 28", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "red") +
+  annotate("rect", xmin = "September 28", xmax = "October 12", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "blue")+
+  annotate("rect", xmin = "October 12", xmax = "October 26", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "green")
+
+```
+
+
+
+# Louisiana Hurricane Francine
+
+```{r}
+LA <- read_csv(here("Final Project/CSV_LA_COVID_TESTBYWEEK_TRACT_PUBLICUSE.csv"))
+
+LA$Date_start_week <- as.character(LA$Date_start_week)
+LA$Date_start_week <- factor(LA$Date_start_week, levels=unique(LA$Date_start_week))
+
+
+LA <- LA %>% 
+  filter(str_ends(Date_start_week, "/20")) #%>%
+  #filter(!str_starts(Date_start_week, "1")) %>% 
+  # filter(!str_starts(Date_start_week, "2")) %>% 
+  # filter(!str_starts(Date_start_week, "3")) %>% 
+  # filter(!str_starts(Date_start_week, "4")) %>% 
+  # filter(!str_starts(Date_start_week, "5")) %>% 
+  # select(-2,-3,-6,-7,-8) 
+
+
+LA<- LA %>% 
+  group_by(Date_start_week) %>% 
+  summarise(Count_total = sum(Weekly_Case_Count))
+
+
+
+LA_graph <- ggplot(data = LA, aes(x = Date_start_week, y = Count_total))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "Louisiana Respitory Illness Trends in 2020")
+
+LA_graph 
+LA_graph_annotated <- LA_graph + annotate("rect", xmin = "8/27/20", xmax = "9/3/20", ymin = 0, ymax = 25000,
+             alpha = 0.3, fill = "red") +
+  annotate("rect", xmin = "9/3/20", xmax = "9/10/20", ymin = 0, ymax = 25000,
+             alpha = 0.3, fill = "green")
+
+
+LA_graph_annotated
+```
+
+
+Hurricane Helene - caused flooding as well 
+Wind and flooding from Hurricane Helene devastated North Carolina on September 27, 2024, 
+24-29
+
+Hurricane laura - lousiana, august 27-29 2020
+
+
+
+flood - july 2025 central texas flood, Guadalupe river 
+West Virginia, June 2016 - 23 deaths
+
+
+
+From January 7 to 31, 2025, a series of 14 destructive wildfires affected the Los Angeles metropolitan area and San Diego County in California, United States
+Maui Wildfires, Hawaii (2023) August 2023
+
+
+
+
+https://www.nbcdfw.com/news/national-international/deadliest-floods-in-the-us-in-the-last-25-years/3878935/
+
+https://ncdetect.org/respiratory-dashboard/ 
+https://covid19.ncdhhs.gov/dashboard
+
+https://texas-respiratory-illness-dashboard-txdshsea.hub.arcgis.com/pages/texas-statewide-emergency-department-visits-for-respiratory-illnesses
+https://texas-respiratory-illness-dashboard-txdshsea.hub.arcgis.com/pages/texas-statewide-emergency-department-visits-for-respiratory-illnesses
+
+
+
+
+
+
