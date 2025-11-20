@@ -15,6 +15,11 @@ library(treemapify)
 library(dplyr)
 library(ggpmisc)
 library(ggplot2)
+library(tigris)
+library(viridis)
+library(scales)
+library(grid)
+library(sf)
 ```
 
 ## Data Sources
@@ -39,17 +44,11 @@ library(ggplot2)
 
 
 
+
 ## Preliminary Charts
 
 ### Do respiratory symptoms see an uptick after natural disasters?
 ```{r}
-library(tidyverse)
-library(dplyr)
-library(here)
-library(ggpmisc)
-library(ggplot2)
-
-
 nc<- read_csv(here("data/OverallCounts_tidy.csv"))
 
 
@@ -156,6 +155,18 @@ LA_graph_annotated
 ```
 
 ### How much do natural disasters affect the U.S. economy?
+Note: Our original CSV file was too big to upload to Canvas, so we created a CSV file with the original code and used that. Original code noted below:
+
+```
+losses <- read_csv(here("C:/Users/alyss/OneDrive/Documents/math268/data/lnd_full_clean_2024-12-31.csv"))
+
+losses <- losses %>%
+  mutate(year = as.numeric(year))
+
+selected_losses <- losses %>%
+  filter(event_type %in% c("Hurricane", "Flood", "Tornado", "Wildfire"))
+```
+
 ```{r}
 library(tidyverse)
 library(here)
@@ -189,10 +200,66 @@ ggplot(selected_losses, aes(x = year, y = loss_amount,
 
 ### Which U.S. regions experience the highest economic losses from natural disasters?
 
+```{r}
+losses <- read_csv(here("data/NYFed_natural-disasters_download_data/lnd_full_clean_2024-12-31.csv"))
+
+losses <- losses %>%
+  mutate(fips = str_pad(fips, width = 5, side = "left", pad = "0")) %>%
+  filter(damages_total_adj > 0)
+
+major_types <- c(
+  "Flood", "Flash Flood", "Hurricane", "Tropical Storm",
+  "Storm Surge/Tide", "Tornado", "Wildfire", "High Wind",
+  "Winter Storm", "Thunderstorm Wind"
+)
+
+losses_major <- losses %>%
+  filter(event_type %in% major_types)
+
+# NEW: Damage aggregation
+county_damage <- losses_major %>%
+  group_by(fips) %>%
+  summarize(total_damage = sum(damages_total_adj, na.rm = TRUE))
+
+map_data <- counties %>%
+  left_join(county_damage, by = c("GEOID" = "fips"))
+
+map_data$total_damage[is.na(map_data$total_damage)] <- 0
+
+```
+
+```{r, fig.width=14, fig.height=10}
+ggplot(map_data) +
+  geom_sf(aes(fill = total_damage), color = NA) +
+  scale_fill_viridis_c(
+    option = "A",
+    trans = "log10",
+    labels = scales::label_number(
+      accuracy = 0.1,
+      scale_cut = scales::cut_short_scale()
+    )
+  ) +
+  labs(
+    title = "Total Natural Disaster Damage by County",
+    subtitle = "Cumulative inflation-adjusted damage from major hazard events",
+    fill = "Total Damage"
+  ) +
+  coord_sf(
+    xlim = c(-125, -65),
+    ylim = c(25, 50),
+    expand = FALSE
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    legend.position = "bottom",
+    legend.key.width = unit(4, "cm"),
+    legend.key.height = unit(0.7, "cm"),
+    panel.grid = element_blank()
+  )
+```
 
 ### What disasters cause the most deaths?
 ```{r}
-library(treemapify)
 # import data
 deaths <- read_csv(here("data/our_world-usa/number-of-deaths-by-disaster.csv"))
 
