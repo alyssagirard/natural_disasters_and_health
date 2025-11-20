@@ -43,7 +43,17 @@ library(sf)
 
 ## Evaluating Our Proposal Expectations
 
+### Do respiratory symptoms see an uptick after natural disasters?
 
+### How much do natural disasters affect the U.S. economy?
+
+### Which U.S. regions experience the highest economic losses from natural disasters?
+
+### What disasters cause the most deaths?
+We originally asked the question "What disasters cause people to require the most assistance", but based on the feedback we received it was far too vague. In order to be more specific in our research, we decided to change the question entirely to "what disasters cause the most deaths?" For our original question, we predicted that floods would cause the most need for assistance. Translating this for our new question into predicting that floods cause the most deaths, we saw that extreme weather (i.e. hurricanes and tornadoes) caused the most, with 31,825 deaths while floods had 3,463. 
+
+###  What disasters cause the highest rates of homelessness?
+Our question was "What disasters cause the highest rates of homelessness?" and we predicted that the disasters that would cause the highest rates of homelessness are wildfires and floods. In our research we saw that floods indeed caused the most, with around 9478 tens of thousands of cases of homelessness, but extreme weather, with 5643 tens of thousands of cases, followed with wildfires being in last with 25 tens of thousands of cases. 
 
 
 ## Preliminary Charts
