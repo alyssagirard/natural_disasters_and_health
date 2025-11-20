@@ -14,17 +14,128 @@ library(here)
 ```
 
 
-
+https://ourworldindata.org/grapher/number-homeless-from-natural-disasters?tab=table
 
 ## What disasters cause the most deaths?
  
 ```{r}
+library(treemapify)
 # import data
 deaths <- read_csv(here("data/our_world-usa/number-of-deaths-by-disaster.csv"))
 
 deaths_usa <- deaths %>%
-  filter(Entity == "United States")
+  filter(Entity == "United States") %>%
+  select(Year,
+         `Deaths - Flood`,
+         `Deaths - Earthquake`,
+         `Deaths - Extreme weather`)
+
+long_data <- deaths_usa %>%
+  pivot_longer(cols = -Year, names_to = "Disaster", values_to = "Deaths") %>%
+  mutate(Deaths = ifelse(is.na(Deaths), 0, Deaths))
+
+total_data <- long_data %>%
+  group_by(Disaster) %>%
+  summarise(Total_Deaths = sum(Deaths))
+
+ggplot(total_data, aes(
+  area = Total_Deaths,
+  fill = Disaster,
+  label = paste0(Disaster, "\n", Total_Deaths)
+)) +
+  geom_treemap() +
+  geom_treemap_text(
+    colour = "white",
+    place = "centre",
+    grow = TRUE
+  ) +
+  scale_fill_manual(values = c(
+    "Deaths - Flood" = "blue",
+    "Deaths - Earthquake" = "red",
+    "Deaths - Extreme weather" = "orange"
+  )) +
+  labs(title = "Total Deaths by Disaster Type") +
+  theme(legend.position = "none")
 ```
 
+
+```{r}
+saving
+
+all_years <- deaths_usa %>%
+  summarise(
+    Flood = sum(`Deaths - Flood`, na.rm = TRUE),
+    Earthquake = sum(`Deaths - Earthquake`, na.rm = TRUE),
+    ExtremeWeather = sum(`Deaths - Extreme weather`, na.rm = TRUE)
+  )
+```
+
+
+
+
+
+
  - What disasters cause the highest rates of homelessness?
+```{r}
+# read in the data
+homeless <- read_csv(here("data/homeless_by_disaster/number-homeless-from-natural-disasters.csv"))
+
+total_homeless <- read_csv(here("data/our_world-usa/number-homeless.csv"))
+
+total_usa_homeless <- total_homeless %>%
+  filter(total_homeless$`Country name` == "United States")
+# USE THE FIRST CSV HOMELESS
+```
+
+
+Numbers version
+```{r}
+library(dplyr)
+# create vars
+three_types <- homeless %>%
+  group_by(Entity) %>%
+  summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%
+  filter(Entity %in% c("Extreme weather", "Flood", "Wildfire"))
+
+all_disasters <- homeless %>%
+  group_by(Entity) %>%
+  summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%
+  filter(Entity == "All disasters")
+
+ggplot(data = three_types,
+       aes(x = Entity, y = total_homeless / 1000))+
+  geom_bar(stat = "identity", fill = "blue") +
+  geom_text(aes(label = total_homeless/10000, vjust = -0.5, size = 1)) +
+  scale_y_continuous(limits = c(0, 125000)) +
+  labs(title = "",
+       x = "Type of Disaster",
+       y = " (in tens of thousands)")
+```
+percent version
+```{r}
+library(dplyr)
+# create vars
+three_types <- homeless %>%
+  group_by(Entity) %>%
+  summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%
+  filter(Entity %in% c("Extreme weather", "Flood", "Wildfire"))
+
+all_disasters <- homeless %>%
+  group_by(Entity) %>%
+  summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%
+  filter(Entity == "All disasters")
+
+three_types <- three_types %>%
+  mutate(pct = round((total_homeless / all_disasters$total_homeless) * 100), 1)
+
+ggplot(data = three_types,
+       aes(x = Entity, y = pct))+
+  geom_bar(stat = "identity", fill = "blue") +
+  geom_text(aes(label = pct, vjust = -0.5, size = 0.2)) +
+  scale_y_continuous(limits = c(0, 100)) +
+  labs(title = "",
+       x = "Type of Disaster",
+       y = " (in tens of thousands)")
+```
+ 
  
