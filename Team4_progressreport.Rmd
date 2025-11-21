@@ -1,5 +1,5 @@
 ---
-title: "How Do Hurricanes, Wildfires, and Floods Affect Human Welfare in the United States?"
+title: "How Do Hurricanes, Wildfires, and Floods Affect Human Welfare and Economics in the United States?"
 author: "Kaya Williams, Akillesh Suresh, Alyssa Girard"
 date: "2025-11-21"
 output: html_document
