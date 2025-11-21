@@ -43,7 +43,7 @@ library(sf)
 
 ## Evaluating Our Proposal Expectations
 
-### Do respiratory symptoms see an uptick after natural disasters?
+### How do rates of respiratory symptoms change after natural disasters?
 
 ### How much do natural disasters affect the U.S. economy?
 
@@ -58,7 +58,7 @@ Our question was "What disasters cause the highest rates of homelessness?" and w
 
 ## Preliminary Charts
 
-### Do respiratory symptoms see an uptick after natural disasters?
+### How do rates of respiratory symptoms change after natural disasters?
 ```{r}
 nc<- read_csv(here("data/OverallCounts_tidy.csv"))
 
@@ -336,7 +336,8 @@ ggplot(data = three_types,
 
 ## Member Contributions
 ### Kaya Williams
- - Do respiratory symptoms see an uptick after natural disasters? charts
+ - How do rates of respiratory symptoms change after natural disasters?
+ charts
  - Worked on progress report file
  
 ### Akillesh Suresh
