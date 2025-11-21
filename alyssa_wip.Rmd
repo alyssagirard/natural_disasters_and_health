@@ -19,9 +19,8 @@ https://ourworldindata.org/grapher/number-homeless-from-natural-disasters?tab=ta
 ## What disasters cause the most deaths?
  
 ```{r}
-library(treemapify)
 # import data
-deaths <- read_csv(here("data/our_world-usa/number-of-deaths-by-disaster.csv"))
+deaths <- read_csv(here("data/number-of-deaths-by-disaster.csv"))
 
 deaths_usa <- deaths %>%
   filter(Entity == "United States") %>%
@@ -57,24 +56,11 @@ ggplot(total_data, aes(
   labs(title = "Total Deaths by Disaster Type") +
   theme(legend.position = "none")
 ```
-
-
-
-
-
-
-
- - What disasters cause the highest rates of homelessness?
+- The relationship we are investigating is the relationship between natural disasters and death, specifically extreme weather, floods, and wildfire disasters. The visualization does provide evidence as it shows there have been a large amount of deaths due to natural disasters in the United States, specifically extreme weather causing the largest amount, earthquakes causing the second largest, and floods last of the three.
+### What disasters cause the highest rates of homelessness?
 ```{r}
-# read in the data
-homeless <- read_csv(here("data/homeless_by_disaster/number-homeless-from-natural-disasters.csv"))
-# USE THE FIRST CSV HOMELESS
-```
+homeless <- read_csv(here("data/number-homeless-from-natural-disasters.csv"))
 
-
-Numbers version
-```{r}
-homeless <- read_csv(here("data/homeless_by_disaster/number-homeless-from-natural-disasters.csv"))
 three_types <- homeless %>%
   group_by(Entity) %>%
   summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%

@@ -44,20 +44,22 @@ library(sf)
 ## Evaluating Our Proposal Expectations
 
 ### How do rates of respiratory symptoms change after natural disasters?
+Our original question we asked was "Do respiratory illnesses see an uptick after a natural disaster?". However, we reframed this question to be more exploratory than a simple yes/no. Therefore, we changed our follow up to be "How do rates of respiratory symptoms change after natural disasters?". We predicted that respiratory illnesses would increase in areas that recently experienced a natural disaster, however, these first graphs show that there is no increase or change in respiratory illness trends in the weeks following hurricanes in these areas.
 
 ### How much do natural disasters affect the U.S. economy?
+We asked the question, “How much do natural disasters affect the U.S. economy?” Based on our research and previous research, we predicted that the disasters that created the most property damage were floods, hurricanes, and tornadoes. We predicted that these disasters would create large financial losses because they are likely to destroy homes, infrastructure, and public utilities; thus, requiring millions of dollars in recovery to repair. We anticipated that wildfires could impact the economy considerably in some areas, but that the overall loss would be lower than that of storms and flooding. Overall, we predicted that the most severe weather-related disasters would create large long-term burdens on the assigned regions.
+
 
 ### Which U.S. regions experience the highest economic losses from natural disasters?
+Initially, we asked, “What regions have been most affected by natural disasters?" After some deliberation, we concluded that our question was too vague, as the term “affected” could refer to physical damage to structures, economic losses, frequency of event occurrence, public health outcomes, or other types of impact. Referring to our Federal Reserve dataset, we revised our original question, in order to focus specifically on economic losses, something the Federal Reserve dataset measured annually on a consistent basis across counties in the United States. Once we reframed our question to focus on economic loss, the results of our analysis confirmed our original hypothesis that the Gulf Coast states had the greatest economic losses due the frequency of hurricanes and flooding - with Texas, Louisiana, Mississippi, Alabama, and Florida experiencing the highest cumulative economic damages. Elevated economic losses also appear along the Atlantic coastline, in some comparison with California on the West Coast, while much of the midwest and northern interior appeared with much reduced total economic losses. Overall, our revised question allowed us to more definitively conclude that coastal areas, especially Gulf and Atlantic coastal regions, face the greatest economic vulnerability to natural disasters.
 
 ### What disasters cause the most deaths?
 We originally asked the question "What disasters cause people to require the most assistance", but based on the feedback we received it was far too vague. In order to be more specific in our research, we decided to change the question entirely to "what disasters cause the most deaths?" For our original question, we predicted that floods would cause the most need for assistance. Translating this for our new question into predicting that floods cause the most deaths, we saw that extreme weather (i.e. hurricanes and tornadoes) caused the most, with 31,825 deaths while floods had 3,463. 
-
 ###  What disasters cause the highest rates of homelessness?
 Our question was "What disasters cause the highest rates of homelessness?" and we predicted that the disasters that would cause the highest rates of homelessness are wildfires and floods. In our research we saw that floods indeed caused the most, with around 9478 tens of thousands of cases of homelessness, but extreme weather, with 5643 tens of thousands of cases, followed with wildfires being in last with 25 tens of thousands of cases. 
 
 
 ## Preliminary Charts
-
 ### How do rates of respiratory symptoms change after natural disasters?
 ```{r}
 nc<- read_csv(here("data/OverallCounts_tidy.csv"))
@@ -99,8 +101,7 @@ p1<- helene_illness + annotate("rect", xmin = "September 21", xmax = "October 5"
 
 p1  
 ```
-
-
+The relationship this graph investigates is the relationship between total emergency department visits in North Carolina for respiratory illnesses and the Weeks leading up to and following a natural disaster. The highlighted portion in red is the two weeks during which Hurricane Helene devastated North Carolina. The blue represents two weeks where there are recovery and emergency services in the area. The green represents the time frame after the two-week recovery period, when respiratory illnesses start to incubate. This is when symptoms will start to show, and people will be getting tested for illness. This portion shows a slight uptick in respiratory illnesses following the hurricane.
 
 ```{r, helene by illness}
 
@@ -129,6 +130,8 @@ helene_by_illness + annotate("rect", xmin = "September 21", xmax = "September 28
              alpha = 0.3, fill = "green")
 
 ```
+The relationship this graph is investigating is the relationship between total emergency department visits in North Carolina for COVID-like illnesses, Influenza, and RSV-like illnesses, and the weeks leading up to and following a natural disaster. The highlighted portion in red is the two weeks during which Hurricane Helene devastated North Carolina. The blue represents two weeks where there are recovery and emergency services in the area. The green represents the time frame after the two-week incubation period for respiratory illness, which is when symptoms will start to show, and people will be getting tested. All illnesses had a slight increase after the incubation period.
+
 ```{r}
 LA <- read_csv(here("data/CSV_LA_COVID_TESTBYWEEK_TRACT_PUBLICUSE.csv"))
 
@@ -169,9 +172,9 @@ LA_graph_annotated <- LA_graph + annotate("rect", xmin = "8/27/20", xmax = "9/3/
 
 LA_graph_annotated
 ```
+The relationship this graph investigates is the relationship between total emergency department visits in Louisiana for Respiratory illnesses and the weeks leading up to and following a natural disaster. The highlighted portion in red is the week when Hurricane Laura hit Louisiana. The green represents the time frame where Respiratory illnesses would start to show symptoms. Respiratory illnesses for this region showed no change in trend or increase during this time.
 
 ### How much do natural disasters affect the U.S. economy?
-
 ```{r}
 
 losses <- read_csv(here("data/lnd_full_clean_2024-12-31.csv"))
@@ -205,9 +208,9 @@ ggplot(selected_losses, aes(x = year,
     axis.title = element_text(size = 14)
   )
 ```
+Our initial depiction reveals that natural disasters have a notable and disproportionately distributed economic impact on the United States. The most economically damaging hazard is hurricanes though the U.S. suffers tens of billions of dollars of losses from hurricanes in some years. Floods and tornadoes continuously cause economic losses but are thereby in lower amounts producing clusters of lower-level damages on this timeline. Until recent years wildfires were lower but we see a steep projection for one of the highest single year economic losses associated with earthquakes in the dataset. These trends affirm our expectation that natural disasters cause serious economic impacts but also call attention to the disproportionately large impacts of extreme high intensity hurricane and wildfire events relative to less damaging hazard types.
 
 ### Which U.S. regions experience the highest economic losses from natural disasters?
-
 ```{r}
 options(tigris_use_cache = TRUE)
 
@@ -268,6 +271,7 @@ ggplot(map_data) +
     panel.grid = element_blank()
   )
 ```
+Our county-level graph of cumulative damages from natural hazards suggests that economic impacts are regionally concentrated by severities of damages. Damage is consistent along the Gulf Coast (Texas, Louisiana, Mississippi, Alabama, Florida) and to the region as a whole in the Southeast due to seasonality of hurricanes or long-term, major flooding events. We also observe consistent damages along the Atlantic Coast, then into the Northeast, again consistent with coastal storm characteristics that could re-expose the area to damages over time. On the West Coast, specifically California, the cumulative impacts from wildfires and other large scale hazards show economic impacts in an affect we see with floods. Finally, to the contrary, the inland areas of the Midwest and northern interior states show a significantly lower cumulative damage overall and only a few areas show substantial damages due to weather. Overall, there is a clear geographic divide in that coastal areas see a significantly concentrated economic risk, mostly in the regions bordering the Gulf and Atlantic Oceans, where inland areas tend to have lower high-damage events.
 
 ### What disasters cause the most deaths?
 ```{r}
@@ -308,6 +312,7 @@ ggplot(total_data, aes(
   labs(title = "Total Deaths by Disaster Type") +
   theme(legend.position = "none")
 ```
+The relationship we are investigating in this graph is the relationship between natural disasters and death, specifically extreme weather, floods, and wildfire disasters. The visualization does provide evidence as it shows there have been a large amount of deaths due to natural disasters in the United States, specifically extreme weather causing the largest amount, earthquakes causing the second largest, and floods last of the three.
 
 ### What disasters cause the highest rates of homelessness?
 ```{r}
@@ -326,12 +331,13 @@ all_disasters <- homeless %>%
 ggplot(data = three_types,
        aes(x = Entity, y = total_homeless / 1000))+
   geom_bar(stat = "identity", fill = "blue") +
-  geom_text(aes(label = total_homeless/10000, vjust = -0.5, size = 1)) +
+  geom_text(aes(label = total_homeless/10000, vjust = -0.5)) +
   scale_y_continuous(limits = c(0, 125000)) +
   labs(title = "",
        x = "Type of Disaster",
        y = " (in tens of thousands)")
 ```
+The relationship we are investigating in this graph is the relationship between homelessness and natural disasters. Specifically, we are investigating how much three natural disasters (Extreme weather, floods, and wildfires) cause people to become homeless, and comparing the amounts of the three to determine which type causes the most cases of homelessness. We can determine from the graph that floods cause the most homelessness (likely due to water damage), with extreme weather coming in second (likely due to structural damage) and wildfires the lowest of the three (likely due to wildfires typically occurring farther from populous areas).
 
 
 ## Member Contributions
