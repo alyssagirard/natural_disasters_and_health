@@ -5,6 +5,8 @@ date: "2025-11-21"
 output: html_document
 ---
 
+### Takes a while to run because of a large dataset but it works.
+
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, 
                       message = FALSE,
@@ -215,8 +217,6 @@ Our initial depiction reveals that natural disasters have a notable and dispropo
 options(tigris_use_cache = TRUE)
 
 counties <- counties(cb = TRUE, year = 2021)
-
-losses <- read_csv(here("data/lnd_full_clean_2024-12-31.csv"))
 
 losses <- losses %>%
   mutate(fips = str_pad(fips, width = 5, side = "left", pad = "0")) %>%
