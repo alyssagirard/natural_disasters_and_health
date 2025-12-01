@@ -245,6 +245,8 @@ county_damage <- losses_major %>%
   group_by(fips) %>%
   summarize(total_damage = sum(damages_total_adj, na.rm = TRUE))
 
+states <- states(cb = TRUE, year = 2021)
+
 map_data <- counties %>%
   left_join(county_damage, by = c("GEOID" = "fips"))
 
@@ -255,6 +257,8 @@ map_data$total_damage[is.na(map_data$total_damage)] <- 0
 ```{r, fig.width=14, fig.height=10}
 ggplot(map_data) +
   geom_sf(aes(fill = total_damage), color = NA) +
+  geom_sf(data = states, fill = NA, color = "white", size = 0.3) +
+  
   scale_fill_viridis_c(
     option = "A",
     trans = "log10",
@@ -280,6 +284,7 @@ ggplot(map_data) +
     legend.key.height = unit(0.7, "cm"),
     panel.grid = element_blank()
   )
+
 ```
 Our county-level graph of cumulative damages from natural hazards suggests that economic impacts are regionally concentrated by severities of damages. Damage is consistent along the Gulf Coast (Texas, Louisiana, Mississippi, Alabama, Florida) and to the region as a whole in the Southeast due to seasonality of hurricanes or long-term, major flooding events. We also observe consistent damages along the Atlantic Coast, then into the Northeast, again consistent with coastal storm characteristics that could re-expose the area to damages over time. On the West Coast, specifically California, the cumulative impacts from wildfires and other large scale hazards show economic impacts in an affect we see with floods. Finally, to the contrary, the inland areas of the Midwest and northern interior states show a significantly lower cumulative damage overall and only a few areas show substantial damages due to weather. Overall, there is a clear geographic divide in that coastal areas see a significantly concentrated economic risk, mostly in the regions bordering the Gulf and Atlantic Oceans, where inland areas tend to have lower high-damage events.
 
