@@ -11,13 +11,22 @@ knitr::opts_chunk$set(echo = TRUE,
                       warning = FALSE)
 library(tidyverse)
 library(here)
+library(dplyr)
+library(treemapify)
+library(ggpmisc)
+library(ggplot2)
+library(tigris)
+library(viridis)
+library(scales)
+library(grid)
+library(lubridate)
+library(sf)
 ```
 
 
 https://ourworldindata.org/grapher/number-homeless-from-natural-disasters?tab=table
 
 ## What disasters cause the most deaths?
- 
 ```{r}
 # import data
 deaths <- read_csv(here("data/number-of-deaths-by-disaster.csv"))
@@ -37,25 +46,41 @@ total_data <- long_data %>%
   group_by(Disaster) %>%
   summarise(Total_Deaths = sum(Deaths))
 
-ggplot(total_data, aes(
+total_data <- total_data %>%
+  mutate(Disaster = recode(Disaster,
+                                      "Deaths - Earthquake" = "Earthquake",
+                                      	
+"Deaths - Extreme weather" = "Extreme Weather",
+"Deaths - Flood" = "Flood"
+))
+
+ggplot(data=total_data, aes(
   area = Total_Deaths,
   fill = Disaster,
-  label = paste0(Disaster, "\n", Total_Deaths)
+  subgroup = Disaster,
+  label = Total_Deaths
 )) +
   geom_treemap() +
+  geom_treemap_subgroup_border()+
+  geom_treemap_subgroup_text(place = "centre",
+                             size = 24,
+                             alpha = 0.7,
+                             colour="black",
+                             fontface="italic")+
   geom_treemap_text(
-    colour = "white",
-    place = "centre",
+    place = "topleft",
+    colour = "black",
     grow = TRUE
   ) +
   scale_fill_manual(values = c(
-    "Deaths - Flood" = "blue",
-    "Deaths - Earthquake" = "red",
-    "Deaths - Extreme weather" = "orange"
+    "Flood" = "lightblue",
+    "Earthquake" = "pink",
+    "Extreme Weather" = "orange"
   )) +
-  labs(title = "Total Deaths by Disaster Type") +
-  theme(legend.position = "none")
+  labs(title = "Total Deaths by Disaster Type in the US",
+       subtitle = "Floods, Earthquakes, and Extreme Weather (Tornadoes, Hurricanes, etc)") # maybe get rid of the subtitle?
 ```
+ 
 - The relationship we are investigating is the relationship between natural disasters and death, specifically extreme weather, floods, and wildfire disasters. The visualization does provide evidence as it shows there have been a large amount of deaths due to natural disasters in the United States, specifically extreme weather causing the largest amount, earthquakes causing the second largest, and floods last of the three.
 ### What disasters cause the highest rates of homelessness?
 ```{r}
@@ -64,22 +89,27 @@ homeless <- read_csv(here("data/number-homeless-from-natural-disasters.csv"))
 three_types <- homeless %>%
   group_by(Entity) %>%
   summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%
-  filter(Entity %in% c("Extreme weather", "Flood", "Wildfire"))
+  filter(Entity %in% c("Extreme weather", "Flood", "Wildfire")) %>%
+  mutate(Disaster = Entity)
 
 all_disasters <- homeless %>%
   group_by(Entity) %>%
   summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%
-  filter(Entity == "All disasters")
+  filter(Entity == "All disasters") %>%
+  mutate(Disaster = Entity)
 
 ggplot(data = three_types,
-       aes(x = Entity, y = total_homeless / 1000))+
-  geom_bar(stat = "identity", fill = "blue") +
-  geom_text(aes(label = total_homeless/10000, vjust = -0.5, size = 1)) +
+       aes(x = Disaster,
+           y = total_homeless / 1000,
+           fill = Disaster))+
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = total_homeless/10000, vjust = -0.5)) +
   scale_y_continuous(limits = c(0, 125000)) +
-  labs(title = "",
+  labs(title = "Cases of Homelessness by Disaster (in tens of thousands)",
        x = "Type of Disaster",
-       y = " (in tens of thousands)")
+       y = "Cases (tens of thousands)")
 ```
+
 percent version
 ```{r}
 library(dplyr)
