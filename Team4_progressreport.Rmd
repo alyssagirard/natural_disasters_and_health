@@ -189,28 +189,38 @@ losses <- losses %>%
 
 selected_losses <- losses %>%
   filter(event_type %in% c("Hurricane", "Flood", "Tornado", "Wildfire"))
+
+yearly_losses <- selected_losses %>%
+  group_by(year, event_type) %>%
+  summarise(total_damage = sum(damages_total_adj, na.rm = TRUE)) %>%
+  ungroup()
 ```
 
 ```{r}
-ggplot(selected_losses, aes(x = year, 
-                            y = damages_total_adj,
-                            color = event_type, 
-                            group = event_type)) +
-  geom_line(linewidth = 1.1) +
-  geom_point(size = 2) +
-  labs(
-    title = "Economic Losses Over Time by Natural Disaster Type",
-    x = "Year",
-    y = "Inflation-Adjusted Damage (USD)",
-    color = "Disaster Type"
+ggplot(yearly_losses, aes(
+  x = year,
+  y = total_damage,
+  color = event_type
+)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 1.8) +
+  scale_y_continuous(
+    labels = scales::label_number(scale_cut = scales::cut_short_scale())
   ) +
-  theme_minimal() +
+  facet_wrap(~ event_type, scales = "free_y") +
+  labs(
+    title = "Yearly Economic Losses by Disaster Type",
+    x = "Year",
+    y = "Total Annual Damage (USD)"
+  ) +
+  theme_minimal(base_size = 13) +
   theme(
-    plot.title = element_text(face = "bold", size = 16),
-    axis.title = element_text(size = 14)
+    plot.title = element_text(face = "bold"),
+    legend.position = "none"
   )
+
 ```
-Our initial depiction reveals that natural disasters have a notable and disproportionately distributed economic impact on the United States. The most economically damaging hazard is hurricanes though the U.S. suffers tens of billions of dollars of losses from hurricanes in some years. Floods and tornadoes continuously cause economic losses but are thereby in lower amounts producing clusters of lower-level damages on this timeline. Until recent years wildfires were lower but we see a steep projection for one of the highest single year economic losses associated with earthquakes in the dataset. These trends affirm our expectation that natural disasters cause serious economic impacts but also call attention to the disproportionately large impacts of extreme high intensity hurricane and wildfire events relative to less damaging hazard types.
+Our faceted visualization of yearly inflation-adjusted economic losses shows clear variation in both the magnitude and behavior of different natural disaster types in the United States. Hurricanes remain the most economically destructive hazard by a wide margin, with an extremely pronounced spike around 2005, reflecting the catastrophic impacts of major storms during that period. Flood damages fluctuate year-to-year, with several notable peaks but generally lower totals than hurricanes. Tornado losses show periodic spikes, including a sharp increase around 2011, but remain more moderate overall. Wildfires show relatively low losses through the early years of the dataset before rising dramatically in the late 2010s, aligning with the emergence of more severe and widespread wildfire seasons. Collectively, these trends highlight that while natural disasters consistently impose significant economic costs, the burden is driven disproportionately by high-impact hurricane and wildfire events.and wildfire events relative to less damaging hazard types.
 
 ### Which U.S. regions experience the highest economic losses from natural disasters?
 ```{r}
