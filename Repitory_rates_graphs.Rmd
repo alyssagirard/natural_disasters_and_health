@@ -15,9 +15,10 @@ library(dplyr)
 library(here)
 library(ggpmisc)
 library(ggplot2)
+library(readxl)
 
 
-nc<- read_csv(here("Final Project/data/OverallCounts_tidy.csv"))
+nc<- read_csv(here("data/OverallCounts_tidy.csv"))
 
 
 nc<- nc[31:52,]
@@ -89,7 +90,7 @@ helene_by_illness + annotate("rect", xmin = "September 21", xmax = "September 28
 # Louisiana Hurricane Francine
 
 ```{r}
-LA <- read_csv(here("Final Project/data/CSV_LA_COVID_TESTBYWEEK_TRACT_PUBLICUSE.csv"))
+LA <- read_csv(here("data/CSV_LA_COVID_TESTBYWEEK_TRACT_PUBLICUSE.csv"))
 
 LA$Date_start_week <- as.character(LA$Date_start_week)
 LA$Date_start_week <- factor(LA$Date_start_week, levels=unique(LA$Date_start_week))
@@ -137,11 +138,64 @@ Wind and flooding from Hurricane Helene devastated North Carolina on September 2
 Hurricane laura - lousiana, august 27-29 2020
 
 
+```{r, flood trend texas}
+
+texas<- read_excel("~/Desktop/natural_disasters_and_health/data/Weekly_ED_Visits_by_Age_Group_Data.xlsx")
+texas<- texas %>% 
+  filter(GEOGRAPHY == "PHR 8") %>% 
+  filter(str_ends(WEEK_ENDING, "/2025")) %>% 
+  group_by(WEEK_ENDING) %>% 
+  summarise(total = sum(Combined_Count, na.rm = T)) 
+
+texas<- texas[14:46,]
+
+texas_graph <- ggplot(data = texas, aes(x = WEEK_ENDING, y = total))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "Texas Respitory Illness Trends in 2025")
+
+texas_graph
+
+
+texas_graph <- texas_graph + annotate("rect", xmin = "06/28/2025", xmax = "07/05/2025", ymin = 0, ymax = 1600,
+             alpha = 0.3, fill = "red") +
+  annotate("rect", xmin = "07/05/2025", xmax = "07/12/2025", ymin = 0, ymax = 1600,
+             alpha = 0.3, fill = "green")
+
+texas_graph
+
+```
 
 flood - july 2025 central texas flood, Guadalupe river 
-West Virginia, June 2016 - 23 deaths
 
 
+
+```{r, wildfire trend la metropolitan}
+LA <- read_csv("~/Desktop/natural_disasters_and_health/data/rv-dashboard.csv")
+
+LA <- LA %>% 
+  mutate(LA = ifelse(is.na(COV_ADM), 0, COV_ADM)) %>% 
+  mutate(LA = ifelse(is.na(FLU_ADM), 0, FLU_ADM)) %>% 
+  mutate(LA = ifelse(is.na(RSV_ADM), 0, RSV_ADM))
+
+         
+         
+         
+LA_sum<- LA %>% 
+  filter(RPHO_REGION == "Los Angeles") %>% 
+  filter(!MMWR_YEAR == "2023") %>% 
+  filter(SEASON == "2024/2025") %>%
+  group_by(WEEKENDING) %>% 
+  summarise(total_ED = COV_ADM + FLU_ADM + RSV_ADM)
+
+
+
+
+
+```
 
 From January 7 to 31, 2025, a series of 14 destructive wildfires affected the Los Angeles metropolitan area and San Diego County in California, United States
 Maui Wildfires, Hawaii (2023) August 2023
