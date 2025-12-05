@@ -174,25 +174,35 @@ flood - july 2025 central texas flood, Guadalupe river
 
 
 ```{r, wildfire trend la metropolitan}
-LA <- read_csv("~/Desktop/natural_disasters_and_health/data/rv-dashboard.csv")
+Los_ang <- read_csv("~/Desktop/natural_disasters_and_health/data/rv-dashboard.csv")
 
-LA <- LA %>% 
-  mutate(LA = ifelse(is.na(COV_ADM), 0, COV_ADM)) %>% 
-  mutate(LA = ifelse(is.na(FLU_ADM), 0, FLU_ADM)) %>% 
-  mutate(LA = ifelse(is.na(RSV_ADM), 0, RSV_ADM))
+Los_ang <- Los_ang %>% 
+  mutate(Los_ang = ifelse(is.na(COV_ADM), 0, COV_ADM)) %>% 
+  mutate(Los_ang = ifelse(is.na(FLU_ADM), 0, FLU_ADM)) %>% 
+  mutate(Los_ang = ifelse(is.na(RSV_ADM), 0, RSV_ADM))
 
          
          
          
-LA_sum<- LA %>% 
+LA_sum<- Los_ang %>% 
   filter(RPHO_REGION == "Los Angeles") %>% 
   filter(!MMWR_YEAR == "2023") %>% 
   filter(SEASON == "2024/2025") %>%
   group_by(WEEKENDING) %>% 
   summarise(total_ED = COV_ADM + FLU_ADM + RSV_ADM)
 
+LA_sum <- LA_sum[-c(105:172),]
 
 
+La_graph <- ggplot(data = LA_sum, aes(x = WEEKENDING, y = total_ED))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "Texas Respitory Illness Trends in 2025")
+
+La_graph
 
 
 ```
