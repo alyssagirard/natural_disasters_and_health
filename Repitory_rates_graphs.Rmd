@@ -89,45 +89,45 @@ helene_by_illness + annotate("rect", xmin = "September 21", xmax = "September 28
 
 # Louisiana Hurricane Francine
 
-```{r}
-LA <- read_csv(here("data/CSV_LA_COVID_TESTBYWEEK_TRACT_PUBLICUSE.csv"))
-
-LA$Date_start_week <- as.character(LA$Date_start_week)
-LA$Date_start_week <- factor(LA$Date_start_week, levels=unique(LA$Date_start_week))
-
-
-LA <- LA %>% 
-  filter(str_ends(Date_start_week, "/20")) #%>%
-  #filter(!str_starts(Date_start_week, "1")) %>% 
-  # filter(!str_starts(Date_start_week, "2")) %>% 
-  # filter(!str_starts(Date_start_week, "3")) %>% 
-  # filter(!str_starts(Date_start_week, "4")) %>% 
-  # filter(!str_starts(Date_start_week, "5")) %>% 
-  # select(-2,-3,-6,-7,-8) 
-
-
-LA<- LA %>% 
-  group_by(Date_start_week) %>% 
-  summarise(Count_total = sum(Weekly_Case_Count))
-
-
-
-LA_graph <- ggplot(data = LA, aes(x = Date_start_week, y = Count_total))+
-  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
-  geom_point()+
-  theme(axis.text.x = element_text(angle = 45, hjust=1))+
-  labs(x = "Week",
-       y = "Total Emergency Department Visits for Respitory Illnesses",
-       title = "Louisiana Respitory Illness Trends in 2020")
-
-LA_graph 
-LA_graph_annotated <- LA_graph + annotate("rect", xmin = "8/27/20", xmax = "9/3/20", ymin = 0, ymax = 25000,
-             alpha = 0.3, fill = "red") +
-  annotate("rect", xmin = "9/3/20", xmax = "9/10/20", ymin = 0, ymax = 25000,
-             alpha = 0.3, fill = "green")
-
-
-LA_graph_annotated
+```{r, dont gonna use this }
+# LA <- read_csv(here("data/CSV_LA_COVID_TESTBYWEEK_TRACT_PUBLICUSE.csv"))
+# 
+# LA$Date_start_week <- as.character(LA$Date_start_week)
+# LA$Date_start_week <- factor(LA$Date_start_week, levels=unique(LA$Date_start_week))
+# 
+# 
+# LA <- LA %>% 
+#   filter(str_ends(Date_start_week, "/20")) #%>%
+#   #filter(!str_starts(Date_start_week, "1")) %>% 
+#   # filter(!str_starts(Date_start_week, "2")) %>% 
+#   # filter(!str_starts(Date_start_week, "3")) %>% 
+#   # filter(!str_starts(Date_start_week, "4")) %>% 
+#   # filter(!str_starts(Date_start_week, "5")) %>% 
+#   # select(-2,-3,-6,-7,-8) 
+# 
+# 
+# LA<- LA %>% 
+#   group_by(Date_start_week) %>% 
+#   summarise(Count_total = sum(Weekly_Case_Count))
+# 
+# 
+# 
+# LA_graph <- ggplot(data = LA, aes(x = Date_start_week, y = Count_total))+
+#   geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+#   geom_point()+
+#   theme(axis.text.x = element_text(angle = 45, hjust=1))+
+#   labs(x = "Week",
+#        y = "Total Emergency Department Visits for Respitory Illnesses",
+#        title = "Louisiana Respitory Illness Trends in 2020")
+# 
+# LA_graph 
+# LA_graph_annotated <- LA_graph + annotate("rect", xmin = "8/27/20", xmax = "9/3/20", ymin = 0, ymax = 25000,
+#              alpha = 0.3, fill = "red") +
+#   annotate("rect", xmin = "9/3/20", xmax = "9/10/20", ymin = 0, ymax = 25000,
+#              alpha = 0.3, fill = "green")
+# 
+# 
+# LA_graph_annotated
 ```
 
 
@@ -180,9 +180,6 @@ Los_ang <- Los_ang %>%
   mutate(Los_ang = ifelse(is.na(COV_ADM), 0, COV_ADM)) %>% 
   mutate(Los_ang = ifelse(is.na(FLU_ADM), 0, FLU_ADM)) %>% 
   mutate(Los_ang = ifelse(is.na(RSV_ADM), 0, RSV_ADM))
-
-         
-         
          
 LA_sum<- Los_ang %>% 
   filter(RPHO_REGION == "Los Angeles") %>% 
@@ -191,16 +188,31 @@ LA_sum<- Los_ang %>%
   group_by(WEEKENDING) %>% 
   summarise(total_ED = COV_ADM + FLU_ADM + RSV_ADM)
 
-LA_sum <- LA_sum[-c(105:172),]
+LA_summarise <- LA_sum %>% 
+  group_by(WEEKENDING) %>% 
+  summarise(total_ED = sum(total_ED))
 
+LA_summarise <- LA_summarise[-c(27:43),]
 
-La_graph <- ggplot(data = LA_sum, aes(x = WEEKENDING, y = total_ED))+
+last_nine <- tail(LA_summarise, 9)
+remaining_rows <- head(LA_summarise, 26)
+LA_summarise_correct <- rbind(last_nine, remaining_rows)
+
+LA_summarise_correct$WEEKENDING <- as.character(LA_summarise_correct$WEEKENDING)
+LA_summarise_correct$WEEKENDING <- factor(LA_summarise_correct$WEEKENDING, levels=unique(LA_summarise_correct$WEEKENDING))
+
+La_graph <- ggplot(data = LA_summarise_correct, aes(x = WEEKENDING, y = total_ED))+
   geom_line(linewidth = 1, na.rm = T, aes(group=1))+
   geom_point()+
   theme(axis.text.x = element_text(angle = 45, hjust=1))+
   labs(x = "Week",
        y = "Total Emergency Department Visits for Respitory Illnesses",
-       title = "Texas Respitory Illness Trends in 2025")
+       title = "Los Angeles Respitory Illness Trends in 2025")
+
+La_graph <- La_graph + annotate("rect", xmin = "01/04/2025", xmax = "01/11/2025", ymin = 0, ymax = 3500,
+             alpha = 0.3, fill = "red") +
+  annotate("rect", xmin = "01/11/2025", xmax = "02/01/2025", ymin = 0, ymax = 3500,
+             alpha = 0.3, fill = "orange")
 
 La_graph
 
