@@ -63,7 +63,8 @@ Our question was "What disasters cause the highest rates of homelessness?" and w
 
 ## Preliminary Charts
 ### How do rates of respiratory symptoms change after natural disasters?
-```{r}
+
+```{r, hurricane helene graph, total}
 nc<- read_csv(here("data/OverallCounts_tidy.csv"))
 
 
@@ -79,102 +80,101 @@ nc <- nc %>%
 nc$Date <- as.character(nc$Date)
 nc$Date <- factor(nc$Date, levels=unique(nc$Date))
 
-```
-
-```{r, hurricane helene graph, total}
-
-
 helene_illness <- ggplot(data = nc, aes(x = Date, y = total))+
   geom_line(linewidth = 1, na.rm = T, aes(group=1))+
   geom_point()+
   theme(axis.text.x = element_text(angle = 45, hjust=1))+
   labs(x = "Week",
        y = "Total Emergency Department Visits for Respitory Illnesses",
-       title = "North Carolina Respitory Illness Trends in 2024")
+       title = "North Carolina Respitory Illness Trends in 2024",
+       caption= "Weeks of Hurricane Highlighted in Red")
 
 helene_illness
 
-p1<- helene_illness + annotate("rect", xmin = "September 21", xmax = "October 5", ymin = 0, ymax = 12000,
-             alpha = 0.3, fill = "red") +
-  annotate("rect", xmin = "October 5", xmax = "October 19", ymin = 0, ymax = 12000,
-             alpha = 0.3, fill = "blue")+
-  annotate("rect", xmin = "October 19", xmax = "November 2", ymin = 0, ymax = 12000,
-             alpha = 0.3, fill = "green")
+helene_illness <- helene_illness + annotate("rect", xmin = "September 21", xmax = "October 5", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "red") 
 
-p1  
+helene_illness
 ```
 The relationship this graph investigates is the relationship between total emergency department visits in North Carolina for respiratory illnesses and the Weeks leading up to and following a natural disaster. The highlighted portion in red is the two weeks during which Hurricane Helene devastated North Carolina. The blue represents two weeks where there are recovery and emergency services in the area. The green represents the time frame after the two-week recovery period, when respiratory illnesses start to incubate. This is when symptoms will start to show, and people will be getting tested for illness. This portion shows a slight uptick in respiratory illnesses following the hurricane.
 
-```{r, helene by illness}
+```{r los angeles wildfire}
 
-nc_pivot <- nc %>% 
-  pivot_longer(2:4,
-               names_to = "Illness",
-               values_to = "Count") %>% 
-  select(-total)
+Los_ang <- read_csv("~/Desktop/natural_disasters_and_health/data/rv-dashboard.csv")
 
+Los_ang <- Los_ang %>% 
+  mutate(Los_ang = ifelse(is.na(COV_ADM), 0, COV_ADM)) %>% 
+  mutate(Los_ang = ifelse(is.na(FLU_ADM), 0, FLU_ADM)) %>% 
+  mutate(Los_ang = ifelse(is.na(RSV_ADM), 0, RSV_ADM))
+         
+LA_sum<- Los_ang %>% 
+  filter(RPHO_REGION == "Los Angeles") %>% 
+  filter(!MMWR_YEAR == "2023") %>% 
+  filter(SEASON == "2024/2025") %>%
+  group_by(WEEKENDING) %>% 
+  summarise(total_ED = COV_ADM + FLU_ADM + RSV_ADM)
 
+LA_summarise <- LA_sum %>% 
+  group_by(WEEKENDING) %>% 
+  summarise(total_ED = sum(total_ED))
 
-(helene_by_illness <- ggplot(data = nc_pivot, aes(x = Date, y = Count, color = Illness))+
-  geom_point(size = 1, na.rm = T)+
-  theme(axis.text.x = element_text(angle = 45, hjust=1))+
-  labs(x = "Week",
-       y = "Total Emergency Department Visits for Respitory Illnesses",
-       title = "North Carolina Respitory Illness Trends in 2024")) 
+LA_summarise <- LA_summarise[-c(27:43),]
 
-helene_by_illness
+last_nine <- tail(LA_summarise, 9)
+remaining_rows <- head(LA_summarise, 26)
+LA_summarise_correct <- rbind(last_nine, remaining_rows)
 
-helene_by_illness + annotate("rect", xmin = "September 21", xmax = "September 28", ymin = 0, ymax = 12000,
-             alpha = 0.3, fill = "red") +
-  annotate("rect", xmin = "September 28", xmax = "October 12", ymin = 0, ymax = 12000,
-             alpha = 0.3, fill = "blue")+
-  annotate("rect", xmin = "October 12", xmax = "October 26", ymin = 0, ymax = 12000,
-             alpha = 0.3, fill = "green")
+LA_summarise_correct$WEEKENDING <- as.character(LA_summarise_correct$WEEKENDING)
+LA_summarise_correct$WEEKENDING <- factor(LA_summarise_correct$WEEKENDING, levels=unique(LA_summarise_correct$WEEKENDING))
 
-```
-The relationship this graph is investigating is the relationship between total emergency department visits in North Carolina for COVID-like illnesses, Influenza, and RSV-like illnesses, and the weeks leading up to and following a natural disaster. The highlighted portion in red is the two weeks during which Hurricane Helene devastated North Carolina. The blue represents two weeks where there are recovery and emergency services in the area. The green represents the time frame after the two-week incubation period for respiratory illness, which is when symptoms will start to show, and people will be getting tested. All illnesses had a slight increase after the incubation period.
-
-```{r}
-LA <- read_csv(here("data/CSV_LA_COVID_TESTBYWEEK_TRACT_PUBLICUSE.csv"))
-
-LA$Date_start_week <- as.character(LA$Date_start_week)
-LA$Date_start_week <- factor(LA$Date_start_week, levels=unique(LA$Date_start_week))
-
-
-LA <- LA %>% 
-  filter(str_ends(Date_start_week, "/20")) #%>%
-  #filter(!str_starts(Date_start_week, "1")) %>% 
-  # filter(!str_starts(Date_start_week, "2")) %>% 
-  # filter(!str_starts(Date_start_week, "3")) %>% 
-  # filter(!str_starts(Date_start_week, "4")) %>% 
-  # filter(!str_starts(Date_start_week, "5")) %>% 
-  # select(-2,-3,-6,-7,-8) 
-
-
-LA<- LA %>% 
-  group_by(Date_start_week) %>% 
-  summarise(Count_total = sum(Weekly_Case_Count))
-
-
-
-LA_graph <- ggplot(data = LA, aes(x = Date_start_week, y = Count_total))+
+La_graph <- ggplot(data = LA_summarise_correct, aes(x = WEEKENDING, y = total_ED))+
   geom_line(linewidth = 1, na.rm = T, aes(group=1))+
   geom_point()+
   theme(axis.text.x = element_text(angle = 45, hjust=1))+
   labs(x = "Week",
        y = "Total Emergency Department Visits for Respitory Illnesses",
-       title = "Louisiana Respitory Illness Trends in 2020")
+       title = "Los Angeles Respitory Illness Trends in 2025",
+       caption= "Week of Fire Highlighted in Red")
 
-LA_graph 
-LA_graph_annotated <- LA_graph + annotate("rect", xmin = "8/27/20", xmax = "9/3/20", ymin = 0, ymax = 25000,
-             alpha = 0.3, fill = "red") +
-  annotate("rect", xmin = "9/3/20", xmax = "9/10/20", ymin = 0, ymax = 25000,
-             alpha = 0.3, fill = "green")
+La_graph <- La_graph + annotate("rect", xmin = "01/04/2025", xmax = "01/11/2025", ymin = 0, ymax = 3500,
+             alpha = 0.3, fill = "red")
+
+La_graph
 
 
-LA_graph_annotated
 ```
-The relationship this graph investigates is the relationship between total emergency department visits in Louisiana for Respiratory illnesses and the weeks leading up to and following a natural disaster. The highlighted portion in red is the week when Hurricane Laura hit Louisiana. The green represents the time frame where Respiratory illnesses would start to show symptoms. Respiratory illnesses for this region showed no change in trend or increase during this time.
+
+```{r texas flood}
+
+texas<- read_excel("~/Desktop/natural_disasters_and_health/data/Weekly_ED_Visits_by_Age_Group_Data.xlsx")
+texas<- texas %>% 
+  filter(GEOGRAPHY == "PHR 8") %>% 
+  filter(str_ends(WEEK_ENDING, "/2025")) %>% 
+  group_by(WEEK_ENDING) %>% 
+  summarise(total = sum(Combined_Count, na.rm = T)) 
+
+texas<- texas[14:46,]
+
+texas_graph <- ggplot(data = texas, aes(x = WEEK_ENDING, y = total))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "Texas Respitory Illness Trends in 2025",
+       caption= "Week of Flood Highlighted in Red")
+
+texas_graph
+
+
+texas_graph <- texas_graph + annotate("rect", xmin = "06/28/2025", xmax = "07/05/2025", ymin = 0, ymax = 1600,
+             alpha = 0.3, fill = "red")
+
+texas_graph
+
+```
+
+
 
 ### How much do natural disasters affect the U.S. economy?
 ```{r}
