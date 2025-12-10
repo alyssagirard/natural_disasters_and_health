@@ -26,6 +26,7 @@ library(scales)
 library(grid)
 library(lubridate)
 library(sf)
+library(readxl)
 ```
 
 ## Introduction
@@ -57,7 +58,104 @@ library(sf)
 ## Results
 ### How do rates of respiratory symptoms change after natural disasters?
 ```{r}
+nc<- read_csv(here("data/OverallCounts_tidy.csv"))
 
+
+nc<- nc[31:52,]
+
+nc <- nc %>% 
+  rename(Covid_like_illness = "COVID-like Illness",
+         RSV_like_illness = "RSV-like Illness") %>% 
+  separate(Week_of, c("Date","Year"), sep = ',') %>% 
+  mutate(total = Covid_like_illness + RSV_like_illness + Influenza) %>% 
+  select(-2)
+
+nc$Date <- as.character(nc$Date)
+nc$Date <- factor(nc$Date, levels=unique(nc$Date))
+
+helene_illness <- ggplot(data = nc, aes(x = Date, y = total))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "North Carolina Respitory Illness Trends in 2024",
+       caption= "Weeks of Hurricane Highlighted in Red")
+
+helene_illness <- helene_illness + annotate("rect", xmin = "September 21", xmax = "October 5", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "red") 
+
+helene_illness
+```
+
+```{r}
+Los_ang <- read_csv("data/rv-dashboard.csv")
+
+Los_ang <- Los_ang %>% 
+  mutate(Los_ang = ifelse(is.na(COV_ADM), 0, COV_ADM)) %>% 
+  mutate(Los_ang = ifelse(is.na(FLU_ADM), 0, FLU_ADM)) %>% 
+  mutate(Los_ang = ifelse(is.na(RSV_ADM), 0, RSV_ADM))
+
+LA_sum<- Los_ang %>% 
+  filter(RPHO_REGION == "Los Angeles") %>% 
+  filter(!MMWR_YEAR == "2023") %>% 
+  filter(SEASON == "2024/2025") %>%
+  group_by(WEEKENDING) %>% 
+  summarise(total_ED = COV_ADM + FLU_ADM + RSV_ADM)
+
+LA_summarise <- LA_sum %>% 
+  group_by(WEEKENDING) %>% 
+  summarise(total_ED = sum(total_ED))
+
+LA_summarise <- LA_summarise[-c(27:43),]
+
+last_nine <- tail(LA_summarise, 9)
+remaining_rows <- head(LA_summarise, 26)
+LA_summarise_correct <- rbind(last_nine, remaining_rows)
+
+LA_summarise_correct$WEEKENDING <- as.character(LA_summarise_correct$WEEKENDING)
+LA_summarise_correct$WEEKENDING <- factor(LA_summarise_correct$WEEKENDING, levels=unique(LA_summarise_correct$WEEKENDING))
+
+La_graph <- ggplot(data = LA_summarise_correct, aes(x = WEEKENDING, y = total_ED))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "Los Angeles Respitory Illness Trends in 2025",
+       caption= "Week of Fire Highlighted in Red")
+
+La_graph <- La_graph + annotate("rect", xmin = "01/04/2025", xmax = "01/11/2025", ymin = 0, ymax = 3500,
+             alpha = 0.3, fill = "red")
+
+La_graph
+```
+
+```{r}
+texas<- read_excel("data/Weekly_ED_Visits_by_Age_Group_Data.xlsx")
+texas<- texas %>% 
+  filter(GEOGRAPHY == "PHR 8") %>% 
+  filter(str_ends(WEEK_ENDING, "/2025")) %>% 
+  group_by(WEEK_ENDING) %>% 
+  summarise(total = sum(Combined_Count, na.rm = T)) 
+
+texas<- texas[14:46,]
+
+texas_graph <- ggplot(data = texas, aes(x = WEEK_ENDING, y = total))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "Texas Respitory Illness Trends in 2025",
+       caption= "Week of Flood Highlighted in Red")
+
+
+
+texas_graph <- texas_graph + annotate("rect", xmin = "06/28/2025", xmax = "07/05/2025", ymin = 0, ymax = 1600,
+             alpha = 0.3, fill = "red")
+
+texas_graph
 ```
 
 
@@ -107,7 +205,7 @@ ggplot(yearly_losses, aes(
   )
 
 ```
-
+Our trellis plots clearly illustrates how different types of natural disasters contribute unevenly to economic losses in the United States. Hurricanes produce by far the most extreme and volatile damages, with a historic spike in 2005 associated with Hurricane Katrina and other major storms. Flood-related losses fluctuate year to year but remain on a more moderate scale overall. Tornado damages show periodic peaks, including a sharp rise around 2011, which aligns with meteorological records showing 1,282 confirmed tornadoes in 2010 and 1,721 in 2011, one of the most active tornado years in U.S. history. Wildfire losses remain relatively low until the late 2010s, when rising fire severity leads to sharp increases in total damages. Together, these patterns highlight that the nation’s economic burden from natural hazards is driven disproportionately by rare but extremely costly hurricane and wildfire events, while tornado outbreaks contribute major but less frequent spikes. 
 
 ### Which U.S. regions experience the highest economic losses from natural disasters?
 ```{r}
@@ -173,7 +271,7 @@ ggplot(map_data) +
   )
 
 ```
-
+Our choropleth map of cumulative natural disaster damages reveals clear regional patterns in how economic impacts are distributed across the United States. The Gulf Coast; including Texas, Louisiana, Mississippi, Alabama, and Florida, shows consistently high levels of damage, which aligns with our prediction that this region would be the most affected due to frequent hurricanes and large-scale flooding events. The Atlantic Coast and the Northeast also exhibit elevated damages from repeated coastal storm exposure. On the West Coast, particularly in California, cumulative losses reflect the increasing severity and frequency of wildfires, an unexpectedly large economic burden that rivals the damages seen in hurricane, prone areas of the Gulf. In contrast, much of the Midwest and northern interior display substantially lower cumulative damages, with only isolated counties experiencing significant losses. One surprising pattern is the presence of several inland counties that show unexpectedly high damage totals despite being far from the coasts, suggesting that severe localized floods or tornado outbreaks can create greater economic impacts than typically assumed. Overall, the map highlights a clear geographic divide: coastal regions face concentrated and recurrent economic risks, while inland areas tend to experience far fewer high-damage events.
 
 ### What disasters cause the most deaths?
 ```{r}
@@ -225,10 +323,10 @@ ggplot(data=total_data, aes(
     "Earthquake" = "pink",
     "Extreme Weather" = "orange"
   )) +
-  labs(title = "Total Deaths by Disaster Type in the US",
+  labs(title = "Total Deaths by Disaster Type in the US (1900 onward)",
        subtitle = "Floods, Earthquakes, and Extreme Weather (Tornadoes, Hurricanes, etc)")
 ```
-
+The relationship we are investigating in this graph is the relationship between natural disasters and death, specifically extreme weather, floods, and wildfire disasters. The visualization clearly shows evidence of natural disasters being a large cause for death, with a total of almost 37,000 deaths from 1900 to 2025. the dominance of earthquakes in natural disaster deaths.  The visualization does provide evidence as it shows there have been a large amount of deaths due to natural disasters in the United States, specifically extreme weather causing the largest amount, earthquakes causing the second largest, and floods last of the three.
 
 ### What disasters cause the highest numbers of homelessness?
 ```{r}
