@@ -30,12 +30,12 @@ library(readxl)
 ```
 
 ## Introduction
-### How Do Hurricanes, Wildfires, and Floods Affect Human Welfare and Economics in the United States?
-  Communities across the United States face increasing and ongoing disaster risks, resulting in impacts on how individuals live and the economic growth potential of those communities. This study aims to answer the question: How do hurricanes, wildfires, and floods affect human welfare and economics in the United States? These hazards represent the largest volume and most expensive disasters in our nation. As climate change increases their frequency and intensity, it is essential to assess the detrimental impacts they create. The information gained from examining the residual impacts of these natural disasters will help identify the areas in our country likely to be most adversely affected and the demographic groups that will bear the greatest risks. The results will provide the information needed to establish policies and plans to prepare for future natural disasters.
+### How Does Extreme Weather, Wildfires, and Floods Affect Human Welfare and Economics in the United States?
+  Communities across the United States face increasing and ongoing disaster risks, resulting in impacts on how individuals live and the economic growth potential of those communities. This study aims to answer the question: How do extreme weather affect human welfare and economics in the United States? These hazards represent the largest volume and most expensive disasters in our nation. As climate change increases their frequency and intensity, it is essential to assess the detrimental impacts they create. The information gained from examining the residual impacts of these natural disasters will help identify the areas in our country likely to be most adversely affected and the demographic groups that will bear the greatest risks. The results will provide the information needed to establish policies and plans to prepare for future natural disasters.
 
   To answer this complex question, we developed several follow-up questions that examine different dimensions of human and economic impact. We asked how rates of respiratory symptoms change after natural disasters, as disasters can disrupt air quality, healthcare access, and environmental conditions. Next, we evaluated how much natural disasters affect the U.S. economy by examining inflation-adjusted damages over time. Because damages vary widely across the country, we also asked which U.S. regions experience the highest economic losses, allowing us to assess geographic exposure and vulnerability. Finally, we investigated which disasters cause the most deaths and which result in the highest rates of homelessness, two key indicators of how disasters directly affect human lives and long-term community stability.
 
-  Together, these follow-up questions allow us to examine the problem from multiple angles: health, mortality, homelessness, geography, and financial loss. By combining these perspectives, we can better understand how hurricanes, wildfires, and floods shape human welfare and economic resilience across the United States.
+  Together, these follow-up questions allow us to examine the problem from multiple angles: health, mortality, homelessness, geography, and financial loss. By combining these perspectives, we can better understand how extreme weathers shape human welfare and economic resilience across the United States. 
 
 ## Data & Data Sources
 ### Natural Disasters: Our World in Data
@@ -326,7 +326,7 @@ ggplot(data=total_data, aes(
   labs(title = "Total Deaths by Disaster Type in the US (1900 onward)",
        subtitle = "Floods, Earthquakes, and Extreme Weather (Tornadoes, Hurricanes, etc)")
 ```
-The relationship we are investigating in this graph is the relationship between natural disasters and death, specifically extreme weather, floods, and wildfire disasters. The treemap clearly shows evidence of natural disasters being a large cause for death, with a total of almost 37,000 deaths from 1900 to 2025, specifically extreme weather causing the largest amount, earthquakes causing the second largest, and floods last of the three. Looking at the treemap, the dominance of earthquakes in natural disaster deaths is evident, with it causing 31825 deaths out of the 36,759. For our original question, we predicted that floods would cause the most need for assistance. Translating this for our new question into predicting that floods cause the most deaths, our chart disproves our prediction, with extreme weather (i.e. hurricanes and tornadoes) causing the most, with 31,825 deaths while floods had 3,463. One factor we want to take into consideration is that the extreme weather disaster in this dataset is a combination of multiple disasters, which in turn combines the number of deaths from each disaster. We found it interesting that (even while taking into account that extreme weather is multiple disasters combined) floods had a far lower number of deaths than we originally anticipated.
+The relationship we are investigating in this graph is the relationship between natural disasters and death, specifically extreme weather, floods, and earthquake disasters. The treemap clearly shows evidence of natural disasters being a large cause for death, with a total of almost 37,000 deaths from 1900 to 2025, specifically extreme weather causing the largest amount, earthquakes causing the second largest, and floods last of the three. Looking at the treemap, the dominance of earthquakes in natural disaster deaths is evident, with it causing 31825 deaths out of the 36,759. For our original question, we predicted that floods would cause the most need for assistance. Translating this for our new question into predicting that floods cause the most deaths, our chart disproves our prediction, with extreme weather (i.e. hurricanes and tornadoes) causing the most, with 31,825 deaths while floods had 3,463. One factor we want to take into consideration is that the extreme weather disaster in this dataset is a combination of multiple disasters, which in turn combines the number of deaths from each disaster. We found it interesting that (even while taking into account that extreme weather is multiple disasters combined) floods had a far lower number of deaths than we originally anticipated.
 
 ### What disasters cause the highest numbers of homelessness?
 ```{r}
@@ -351,11 +351,11 @@ ggplot(data = three_types,
   geom_bar(stat = "identity") +
   geom_text(aes(label = total_homeless/10000, vjust = -0.5)) +
   scale_y_continuous(limits = c(0, 125000)) +
-  labs(title = "Cases of Homelessness by Disaster (in tens of thousands)",
+  labs(title = "Cases of Homelessness by Disaster (in tens of thousands, 1900 onwards)",
        x = "Type of Disaster",
        y = "Cases (tens of thousands)")
 ```
-
+The relationship we are investigating in this graph is the relationship between homelessness and natural disasters. Specifically, we are investigating how much three natural disasters (Extreme weather, floods, and wildfires) cause people to become homeless, and comparing the amounts of the three to determine which type causes the most cases of homelessness. We originally predicted that the disasters that would cause the highest rates of homelessness are wildfires and floods. Looking at the chart, floods had the most cases, extreme weather had the second most cases, and wildfire had the least cases. We can see that while our prediction was accurate in that floods do cause the highest numbers of cases of homelessness, in contrast wildfires actually cause the least amount of cases of homelessness. The outcome of wildfires having the least cases was surprising to us, especially considering what we have heard about the January 2025 Los Angeles wildfires. We believe that this could be due to the fact that wildfires often occur in hot, dry regions, which make up a relatively small portion of the United States.
 
 ## Conclusion
 
@@ -363,12 +363,18 @@ ggplot(data = three_types,
 ### Kaya Williams
  - How do rates of respiratory symptoms change after natural disasters?
  charts
+ - Narrative and results of How do rates of respiratory symptoms change after natural disasters?
+ charts
 
 ### Akillesh Suresh
  - Wrote the introduction paragraphs
  - Which U.S. regions experience the highest economic losses from natural disasters? chart
  - How much do natural disasters affect the U.S. economy? chart
+ - Narrative and results of Which U.S. regions experience the highest economic losses from natural disasters? chart
+  - Narrative and results of How much do natural disasters affect the U.S. economy? chart
 
 ### Alyssa Girard
  - What disasters cause the most deaths? chart
  - What disasters cause the highest rates of homelessness? chart
+ - Narrative and results of What disasters cause the highest rates of homelessness? chart
+ - Narrative and results of What disasters cause the most deaths? chart
