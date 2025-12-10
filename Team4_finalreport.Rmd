@@ -87,6 +87,7 @@ helene_illness <- helene_illness + annotate("rect", xmin = "September 21", xmax 
 
 helene_illness
 ```
+This line graph illustrates the trend in total emergency department visits for respiratory illnesses over the period before, during, and after Hurricane Helene struck North Carolina. Hurricane Helene made landfall during the week of September 27 2024 and caused severe devastation across the state, resulting in more than 100 fatalities and affecting approximately 40% of North Carolina. Prior to the hurricane’s arrival, respiratory illness visits show a steady downward trend. This decline continues at a similar slope throughout the week of the hurricane and immediately afterward. In the weeks following the event, however, the graph shows an uptick in respiratory illness visits. This increase may be associated with the influx of aid workers, displaced residents, and recovery personnel, which likely created crowded conditions that facilitated the spread of respiratory infections. This follows our prediction that hurricanes would cause an increase in respiratory illnesses due to the rise of homelessness and close contact with others.
 
 ```{r}
 Los_ang <- read_csv("data/rv-dashboard.csv")
@@ -130,6 +131,7 @@ La_graph <- La_graph + annotate("rect", xmin = "01/04/2025", xmax = "01/11/2025"
 
 La_graph
 ```
+This line graph illustrates the trend in total emergency department visits for respiratory illnesses before, during, and after the 2025 Los Angeles wildfires. The wildfires began in the Palisades area during the week of January 7, 2025, and caused extensive damage across California, destroying more than 9,000 buildings and burning over 40,000 acres. The graph shows a sudden decline in respiratory-related emergency visits during the week of the wildfires. This decrease is likely due to emergency departments redirecting resources toward treating burn and trauma patients during the disaster. In the week following the wildfires, the graph indicates a slight increase in respiratory illness visits, which is consistent with expected health impacts from smoke exposure and poor air quality. This trend aligns with our prediction that wildfires would lead to an increase in respiratory illnesses; however, additional studies are needed to determine whether this increase is statistically significant. 
 
 ```{r}
 texas<- read_excel("data/Weekly_ED_Visits_by_Age_Group_Data.xlsx")
@@ -157,7 +159,7 @@ texas_graph <- texas_graph + annotate("rect", xmin = "06/28/2025", xmax = "07/05
 
 texas_graph
 ```
-
+This line graph depicts the trend in total emergency department visits for respiratory illnesses before, during, and after the 2025 Central Texas floods. The flooding resulted from sudden, significant rainfall across the region, with water levels rising up to 30 feet in some counties. The disaster caused 114 fatalities, left hundreds of people missing, and destroyed thousands of homes. The graph shows relatively stable respiratory illness rates prior to the floods, followed by a slight increase during the event. In the subsequent weeks, there is a notable rise in respiratory illness visits, consistent with the typical seasonal increase that occurs during the fall. Therefore, the uptick observed during the floods is most likely attributable to this annual fall illness pattern rather than the flooding itself. This went against our prediction that flooding would show a significant increase of respiratory illnesses. 
 
 ### How much do natural disasters affect the U.S. economy?
 ```{r}
