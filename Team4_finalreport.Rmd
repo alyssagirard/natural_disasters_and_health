@@ -49,6 +49,207 @@ library(sf)
 
 ## Results
 ### How do rates of respiratory symptoms change after natural disasters?
+```{r}
+
+```
+
+
+### How much do natural disasters affect the U.S. economy?
+```{r}
+
+losses <- read_csv(here("data/lnd_full_clean_2024-12-31.csv"))
+
+losses <- losses %>%
+  mutate(
+    begin_date = as.Date(begin_date),
+    year = year(begin_date)
+  )
+
+selected_losses <- losses %>%
+  filter(event_type %in% c("Hurricane", "Flood", "Tornado", "Wildfire"))
+
+yearly_losses <- selected_losses %>%
+  group_by(year, event_type) %>%
+  summarise(total_damage = sum(damages_total_adj, na.rm = TRUE)) %>%
+  ungroup()
+```
+
+```{r}
+ggplot(yearly_losses, aes(
+  x = year,
+  y = total_damage,
+  color = event_type
+)) +
+  geom_line(linewidth = 1.2) +
+  geom_point(size = 1.8) +
+  scale_y_continuous(
+    labels = scales::label_number(scale_cut = scales::cut_short_scale())
+  ) +
+  facet_wrap(~ event_type, scales = "free_y") +
+  labs(
+  title = "Hurricanes Dominate U.S. Disaster-Related Economic Losses",
+  subtitle = "Inflation-adjusted annual damages (1995–2024) reveal distinct trends across flood, 
+  hurricane, tornado, and wildfire events",
+  x = "Year",
+  y = "Total Annual Damage (USD)"
+) +
+  theme_minimal(base_size = 13) +
+  theme(
+    plot.title = element_text(face = "bold"),
+    legend.position = "none"
+  )
+
+```
+
+
+### Which U.S. regions experience the highest economic losses from natural disasters?
+```{r}
+options(tigris_use_cache = TRUE)
+
+counties <- counties(cb = TRUE, year = 2021)
+
+losses <- losses %>%
+  mutate(fips = str_pad(fips, width = 5, side = "left", pad = "0")) %>%
+  filter(damages_total_adj > 0)
+
+major_types <- c(
+  "Flood", "Flash Flood", "Hurricane", "Tropical Storm",
+  "Storm Surge/Tide", "Tornado", "Wildfire", "High Wind",
+  "Winter Storm", "Thunderstorm Wind"
+)
+
+losses_major <- losses %>%
+  filter(event_type %in% major_types)
+
+county_damage <- losses_major %>%
+  group_by(fips) %>%
+  summarize(total_damage = sum(damages_total_adj, na.rm = TRUE))
+
+states <- states(cb = TRUE, year = 2021)
+
+map_data <- counties %>%
+  left_join(county_damage, by = c("GEOID" = "fips"))
+
+map_data$total_damage[is.na(map_data$total_damage)] <- 0
+
+```
+
+```{r, fig.width=14, fig.height=10}
+ggplot(map_data) +
+  geom_sf(aes(fill = total_damage), color = NA) +
+  geom_sf(data = states, fill = NA, color = "white", size = 0.3) +
+  
+  scale_fill_viridis_c(
+    option = "A",
+    trans = "log10",
+    labels = scales::label_number(
+      accuracy = 0.1,
+      scale_cut = scales::cut_short_scale()
+    )
+  ) +
+  labs(
+    title = "Total Natural Disaster Damage by County",
+    subtitle = "Cumulative inflation-adjusted damage from major hazard events",
+    fill = "Total Damage"
+  ) +
+  coord_sf(
+    xlim = c(-125, -65),
+    ylim = c(25, 50),
+    expand = FALSE
+  ) +
+  theme_minimal(base_size = 16) +
+  theme(
+    legend.position = "bottom",
+    legend.key.width = unit(4, "cm"),
+    legend.key.height = unit(0.7, "cm"),
+    panel.grid = element_blank()
+  )
+
+```
+
+
+### What disasters cause the most deaths?
+```{r}
+deaths <- read_csv(here("data/number-of-deaths-by-disaster.csv"))
+
+deaths_usa <- deaths %>%
+  filter(Entity == "United States") %>%
+  select(Year,
+         `Deaths - Flood`,
+         `Deaths - Earthquake`,
+         `Deaths - Extreme weather`)
+
+long_data <- deaths_usa %>%
+  pivot_longer(cols = -Year, names_to = "Disaster", values_to = "Deaths") %>%
+  mutate(Deaths = ifelse(is.na(Deaths), 0, Deaths))
+
+total_data <- long_data %>%
+  group_by(Disaster) %>%
+  summarise(Total_Deaths = sum(Deaths))
+
+total_data <- total_data %>%
+  mutate(Disaster = recode(Disaster,
+                                      "Deaths - Earthquake" = "Earthquake",
+                                      	
+"Deaths - Extreme weather" = "Extreme Weather",
+"Deaths - Flood" = "Flood"
+))
+
+ggplot(data=total_data, aes(
+  area = Total_Deaths,
+  fill = Disaster,
+  subgroup = Disaster,
+  label = Total_Deaths
+)) +
+  geom_treemap() +
+  geom_treemap_subgroup_border()+
+  geom_treemap_subgroup_text(place = "centre",
+                             size = 24,
+                             alpha = 0.7,
+                             colour="black",
+                             fontface="italic")+
+  geom_treemap_text(
+    place = "topleft",
+    colour = "black",
+    grow = TRUE
+  ) +
+  scale_fill_manual(values = c(
+    "Flood" = "lightblue",
+    "Earthquake" = "pink",
+    "Extreme Weather" = "orange"
+  )) +
+  labs(title = "Total Deaths by Disaster Type in the US",
+       subtitle = "Floods, Earthquakes, and Extreme Weather (Tornadoes, Hurricanes, etc)")
+```
+
+
+### What disasters cause the highest numbers of homelessness?
+```{r}
+homeless <- read_csv(here("data/number-homeless-from-natural-disasters.csv"))
+
+three_types <- homeless %>%
+  group_by(Entity) %>%
+  summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%
+  filter(Entity %in% c("Extreme weather", "Flood", "Wildfire")) %>%
+  mutate(Disaster = Entity)
+
+all_disasters <- homeless %>%
+  group_by(Entity) %>%
+  summarise(total_homeless = sum(Homeless, na.rm = TRUE)) %>%
+  filter(Entity == "All disasters") %>%
+  mutate(Disaster = Entity)
+
+ggplot(data = three_types,
+       aes(x = Disaster,
+           y = total_homeless / 1000,
+           fill = Disaster))+
+  geom_bar(stat = "identity") +
+  geom_text(aes(label = total_homeless/10000, vjust = -0.5)) +
+  scale_y_continuous(limits = c(0, 125000)) +
+  labs(title = "Cases of Homelessness by Disaster (in tens of thousands)",
+       x = "Type of Disaster",
+       y = "Cases (tens of thousands)")
+```
 
 
 ## Conclusion
