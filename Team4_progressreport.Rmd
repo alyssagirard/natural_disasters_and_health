@@ -209,10 +209,12 @@ ggplot(yearly_losses, aes(
   ) +
   facet_wrap(~ event_type, scales = "free_y") +
   labs(
-    title = "Yearly Economic Losses by Disaster Type",
-    x = "Year",
-    y = "Total Annual Damage (USD)"
-  ) +
+  title = "Hurricanes Dominate U.S. Disaster-Related Economic Losses",
+  subtitle = "Inflation-adjusted annual damages (1995–2024) reveal distinct trends across flood, 
+  hurricane, tornado, and wildfire events",
+  x = "Year",
+  y = "Total Annual Damage (USD)"
+) +
   theme_minimal(base_size = 13) +
   theme(
     plot.title = element_text(face = "bold"),
