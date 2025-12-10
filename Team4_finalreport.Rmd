@@ -48,6 +48,8 @@ library(sf)
 
 
 ## Results
+### How do rates of respiratory symptoms change after natural disasters?
+
 
 ## Conclusion
 
