@@ -2,10 +2,11 @@
 title: "Impacts of Major Natural Disasters on American Communities"
 author: "Alyssa Girard, Akillesh Suresh, Kaya Williams"
 date: "2025-12-11"
-output: html_document
-toc: yes
-theme: cerulean
-code_folding: hide
+output:
+  html_document:
+    toc: yes
+    theme: cerulean
+    code_folding: hide
 ---
 
 ```{r setup, include=FALSE}
@@ -28,6 +29,11 @@ library(sf)
 
 ## Introduction
 ### How Do Hurricanes, Wildfires, and Floods Affect Human Welfare and Economics in the United States?
+  Communities across the United States face increasing and ongoing disaster risks, resulting in impacts on how individuals live and the economic growth potential of those communities. This study aims to answer the question: How do hurricanes, wildfires, and floods affect human welfare and economics in the United States? These hazards represent the largest volume and most expensive disasters in our nation. As climate change increases their frequency and intensity, it is essential to assess the detrimental impacts they create. The information gained from examining the residual impacts of these natural disasters will help identify the areas in our country likely to be most adversely affected and the demographic groups that will bear the greatest risks. The results will provide the information needed to establish policies and plans to prepare for future natural disasters.
+
+  To answer this complex question, we developed several follow-up questions that examine different dimensions of human and economic impact. We asked how rates of respiratory symptoms change after natural disasters, as disasters can disrupt air quality, healthcare access, and environmental conditions. Next, we evaluated how much natural disasters affect the U.S. economy by examining inflation-adjusted damages over time. Because damages vary widely across the country, we also asked which U.S. regions experience the highest economic losses, allowing us to assess geographic exposure and vulnerability. Finally, we investigated which disasters cause the most deaths and which result in the highest rates of homelessness, two key indicators of how disasters directly affect human lives and long-term community stability.
+
+  Together, these follow-up questions allow us to examine the problem from multiple angles: health, mortality, homelessness, geography, and financial loss. By combining these perspectives, we can better understand how hurricanes, wildfires, and floods shape human welfare and economic resilience across the United States.
 
 ## Data & Data Sources
 ### Natural Disasters: Our World in Data
@@ -256,10 +262,14 @@ ggplot(data = three_types,
 
 ## Contributions
 ### Kaya Williams
-- 
+ - How do rates of respiratory symptoms change after natural disasters?
+ charts
 
 ### Akillesh Suresh
-- 
+ - Wrote the introduction paragraphs
+ - Which U.S. regions experience the highest economic losses from natural disasters? chart
+ - How much do natural disasters affect the U.S. economy? chart
 
 ### Alyssa Girard
-- 
+ - What disasters cause the most deaths? chart
+ - What disasters cause the highest rates of homelessness? chart
