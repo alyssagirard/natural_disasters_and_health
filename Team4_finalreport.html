@@ -488,6 +488,7 @@ Suresh</a></li>
 <li><a href="#alyssa-girard" id="toc-alyssa-girard">Alyssa
 Girard</a></li>
 </ul></li>
+<li><a href="#appendix-data-dictionary" id="toc-appendix-data-dictionary">Appendix: Data Dictionary</a></li>
 </ul>
 </div>
 
@@ -499,16 +500,16 @@ and Economics in the United States?</h3>
 <p>Communities across the United States face increasing and ongoing
 disaster risks, resulting in impacts on how individuals live and the
 economic growth potential of those communities. This study aims to
-answer the question: How do extreme weather affect human welfare and
-economics in the United States? These hazards represent the largest
-volume and most expensive disasters in our nation. As climate change
-increases their frequency and intensity, it is essential to assess the
-detrimental impacts they create. The information gained from examining
-the residual impacts of these natural disasters will help identify the
-areas in our country likely to be most adversely affected and the
-demographic groups that will bear the greatest risks. The results will
-provide the information needed to establish policies and plans to
-prepare for future natural disasters.</p>
+answer the question: How do extreme weather, wildfires, and floods
+affect human welfare and economics in the United States? These hazards
+represent the largest volume and most expensive disasters in our nation.
+As climate change increases their frequency and intensity, it is
+essential to assess the detrimental impacts they create. The information
+gained from examining the residual impacts of these natural disasters
+will help identify the areas in our country likely to be most adversely
+affected and the demographic groups that will bear the greatest risks.
+The results will provide the information needed to establish policies
+and plans to prepare for future natural disasters.</p>
 <p>To answer this complex question, we developed several follow-up
 questions that examine different dimensions of human and economic
 impact. We asked how rates of respiratory symptoms change after natural
@@ -524,8 +525,8 @@ directly affect human lives and long-term community stability.</p>
 <p>Together, these follow-up questions allow us to examine the problem
 from multiple angles: health, mortality, homelessness, geography, and
 financial loss. By combining these perspectives, we can better
-understand how extreme weathers shape human welfare and economic
-resilience across the United States.</p>
+understand how extreme weathers, wildfires, and floods shape human
+welfare and economic resilience across the United States.</p>
 </div>
 </div>
 <div id="data-data-sources" class="section level2">
@@ -601,6 +602,38 @@ could introduce systematic undercounting.</li>
 is considered a high-credibility data source.</li>
 <li>Link: <a href="https://gis.cdc.gov/grasp/fluview/main.html" class="uri">https://gis.cdc.gov/grasp/fluview/main.html</a></li>
 </ul>
+<pre class="r"><code># Create a data dictionary as a data frame
+data_dictionary &lt;- data.frame(
+  Variable_Name = c(
+    &quot;Entity&quot;, &quot;Year&quot;, &quot;Deaths - Flood&quot;, &quot;Deaths - Extreme weather&quot;,
+    &quot;Deaths - Earthquake&quot;, &quot;Homeless&quot;, &quot;Injured&quot;, &quot;fips&quot;,
+    &quot;event_type&quot;, &quot;begin_date&quot;, &quot;damages_total_adj&quot;, &quot;county&quot;, &quot;state&quot;,
+    &quot;Week_of&quot;, &quot;COVID-like Illness&quot;, &quot;RSV-like Illness&quot;, &quot;Influenza&quot;,
+    &quot;Combined_Count&quot;, &quot;RPHO_REGION&quot;, &quot;WEEKENDING&quot;
+  ),
+  Description = c(
+    &quot;Country or region represented in the dataset.&quot;,
+    &quot;Year of the recorded disaster event.&quot;,
+    &quot;Number of deaths caused by floods in a given year.&quot;,
+    &quot;Number of deaths from extreme weather events.&quot;,
+    &quot;Number of deaths caused by earthquakes.&quot;,
+    &quot;Number of people left homeless due to a disaster.&quot;,
+    &quot;Number of people injured due to disasters.&quot;,
+    &quot;County FIPS code identifying U.S. counties.&quot;,
+    &quot;Type of natural disaster.&quot;,
+    &quot;Date when the disaster event began.&quot;,
+    &quot;Inflation-adjusted total economic damages for the event.&quot;,
+    &quot;County where the event occurred.&quot;,
+    &quot;State where the county is located.&quot;,
+    &quot;Date the weekly reporting period begins.&quot;,
+    &quot;Emergency visits classified as COVID-like illness.&quot;,
+    &quot;Emergency visits classified as RSV-like illness.&quot;,
+    &quot;Emergency visits associated with influenza.&quot;,
+    &quot;Total emergency department visits across illness types.&quot;,
+    &quot;Public Health Region identifier.&quot;,
+    &quot;End date of the reporting week.&quot;
+  )
+)</code></pre>
 </div>
 </div>
 <div id="results" class="section level2">
@@ -1008,6 +1041,45 @@ States.</p>
 </div>
 <div id="conclusion" class="section level2">
 <h2>Conclusion</h2>
+<p>Our research shows that extreme weather, along with floods and
+wildfires, can impact different communities in different ways while also
+greatly affecting each other’s ability to sustain themselves physically
+and financially. When we examined the effects of hurricanes and
+wildfires on American communities’ illness trends, specifically
+respiratory illnesses, we found that both types of disaster had slight
+incremental increases, in terms of reported respiratory illnesses, after
+they occurred, whereas there appeared to be less of a direct connection
+between flood conditions and respiratory illnesses. Thus, we believe
+that post-disaster health affects depend heavily on the specific
+conditions produced by each hazard type and its relationship with that
+community.</p>
+<p>Research into the economy’s impacts from many natural disasters found
+that they caused extensive financial harm for the U.S., especially due
+to hurricanes and wildfires, which had the most damaging and costly
+impact. These impacted areas tended to be concentrated around the Gulf
+Coast region, the Atlantic Coast region, and parts of California that
+regularly experience wildfires, whereas inland areas suffered cumulative
+impacts that were far less than those regions. The most significant
+contributors to human mortality resulting from extreme weather events
+have been identified since 1900; extreme weather events resulted in the
+highest number of disaster-related deaths, while earthquakes were next
+in this category, followed by floods which resulted in fewer
+disaster-related deaths overall than anticipated. Floods, however,
+resulted in homelessness at a higher rate than did extreme weather or
+wildfires. This was not consistent with our original assumption that
+wildfires would cause large numbers of people to be displaced. Thus,
+extreme weather events, wildfires and floods all have a different impact
+on the financial and well-being of humans, and no one hazard
+consistently leads to the same types of negative impact on people. While
+hurricanes, and wildfires are the source of significant economic loss,
+floods result in the most long-term displacement. Extreme weather events
+are associated with the highest level of loss of life.</p>
+<p>Overall, the evidence demonstrates that natural disasters
+significantly affect both human welfare and economic resilience in the
+United States, with their impacts varying widely across regions and
+hazard types. This highlights the need for region-specific preparedness
+strategies and long-term planning that considers not only immediate
+damage but also ongoing health and housing consequences.</p>
 </div>
 <div id="contributions" class="section level2">
 <h2>Contributions</h2>
@@ -1018,6 +1090,7 @@ States.</p>
 charts</li>
 <li>Narrative and results of How do rates of respiratory symptoms change
 after natural disasters? charts</li>
+<li>Created slides for above chart</li>
 </ul>
 </div>
 <div id="akillesh-suresh" class="section level3">
@@ -1031,6 +1104,7 @@ natural disasters? chart</li>
 economic losses from natural disasters? chart</li>
 <li>Narrative and results of How much do natural disasters affect the
 U.S. economy? chart</li>
+<li>Created slides for above charts</li>
 </ul>
 </div>
 <div id="alyssa-girard" class="section level3">
@@ -1042,8 +1116,109 @@ U.S. economy? chart</li>
 homelessness? chart</li>
 <li>Narrative and results of What disasters cause the most deaths?
 chart</li>
+<li>Created slides for above charts</li>
 </ul>
 </div>
+</div>
+<div id="appendix-data-dictionary" class="section level2">
+<h2>Appendix: Data Dictionary</h2>
+<pre class="r"><code>knitr::kable(data_dictionary)</code></pre>
+<table>
+<colgroup>
+<col width="30%" />
+<col width="69%" />
+</colgroup>
+<thead>
+<tr>
+<th align="left">Variable_Name</th>
+<th align="left">Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td align="left">Entity</td>
+<td align="left">Country or region represented in the dataset.</td>
+</tr>
+<tr>
+<td align="left">Year</td>
+<td align="left">Year of the recorded disaster event.</td>
+</tr>
+<tr>
+<td align="left">Deaths - Flood</td>
+<td align="left">Number of deaths caused by floods in a given year.</td>
+</tr>
+<tr>
+<td align="left">Deaths - Extreme weather</td>
+<td align="left">Number of deaths from extreme weather events.</td>
+</tr>
+<tr>
+<td align="left">Deaths - Earthquake</td>
+<td align="left">Number of deaths caused by earthquakes.</td>
+</tr>
+<tr>
+<td align="left">Homeless</td>
+<td align="left">Number of people left homeless due to a disaster.</td>
+</tr>
+<tr>
+<td align="left">Injured</td>
+<td align="left">Number of people injured due to disasters.</td>
+</tr>
+<tr>
+<td align="left">fips</td>
+<td align="left">County FIPS code identifying U.S. counties.</td>
+</tr>
+<tr>
+<td align="left">event_type</td>
+<td align="left">Type of natural disaster.</td>
+</tr>
+<tr>
+<td align="left">begin_date</td>
+<td align="left">Date when the disaster event began.</td>
+</tr>
+<tr>
+<td align="left">damages_total_adj</td>
+<td align="left">Inflation-adjusted total economic damages for the
+event.</td>
+</tr>
+<tr>
+<td align="left">county</td>
+<td align="left">County where the event occurred.</td>
+</tr>
+<tr>
+<td align="left">state</td>
+<td align="left">State where the county is located.</td>
+</tr>
+<tr>
+<td align="left">Week_of</td>
+<td align="left">Date the weekly reporting period begins.</td>
+</tr>
+<tr>
+<td align="left">COVID-like Illness</td>
+<td align="left">Emergency visits classified as COVID-like illness.</td>
+</tr>
+<tr>
+<td align="left">RSV-like Illness</td>
+<td align="left">Emergency visits classified as RSV-like illness.</td>
+</tr>
+<tr>
+<td align="left">Influenza</td>
+<td align="left">Emergency visits associated with influenza.</td>
+</tr>
+<tr>
+<td align="left">Combined_Count</td>
+<td align="left">Total emergency department visits across illness
+types.</td>
+</tr>
+<tr>
+<td align="left">RPHO_REGION</td>
+<td align="left">Public Health Region identifier.</td>
+</tr>
+<tr>
+<td align="left">WEEKENDING</td>
+<td align="left">End date of the reporting week.</td>
+</tr>
+</tbody>
+</table>
 </div>
 
 

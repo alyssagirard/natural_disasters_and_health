@@ -68,6 +68,40 @@ library(readxl)
   - The dataset reflects reported illnesses, not total illnesses, which could introduce systematic undercounting.
 - Because this dataset is maintained by a government organization, it is considered a high-credibility data source.
 - Link: https://gis.cdc.gov/grasp/fluview/main.html
+```{r}
+# Create a data dictionary as a data frame
+data_dictionary <- data.frame(
+  Variable_Name = c(
+    "Entity", "Year", "Deaths - Flood", "Deaths - Extreme weather",
+    "Deaths - Earthquake", "Homeless", "Injured", "fips",
+    "event_type", "begin_date", "damages_total_adj", "county", "state",
+    "Week_of", "COVID-like Illness", "RSV-like Illness", "Influenza",
+    "Combined_Count", "RPHO_REGION", "WEEKENDING"
+  ),
+  Description = c(
+    "Country or region represented in the dataset.",
+    "Year of the recorded disaster event.",
+    "Number of deaths caused by floods in a given year.",
+    "Number of deaths from extreme weather events.",
+    "Number of deaths caused by earthquakes.",
+    "Number of people left homeless due to a disaster.",
+    "Number of people injured due to disasters.",
+    "County FIPS code identifying U.S. counties.",
+    "Type of natural disaster.",
+    "Date when the disaster event began.",
+    "Inflation-adjusted total economic damages for the event.",
+    "County where the event occurred.",
+    "State where the county is located.",
+    "Date the weekly reporting period begins.",
+    "Emergency visits classified as COVID-like illness.",
+    "Emergency visits classified as RSV-like illness.",
+    "Emergency visits associated with influenza.",
+    "Total emergency department visits across illness types.",
+    "Public Health Region identifier.",
+    "End date of the reporting week."
+  )
+)
+```
 
 
 ## Results
@@ -387,6 +421,7 @@ Overall, the evidence demonstrates that natural disasters significantly affect b
  charts
  - Narrative and results of How do rates of respiratory symptoms change after natural disasters?
  charts
+ - Created slides for above chart
 
 ### Akillesh Suresh
  - Wrote the introduction paragraphs
@@ -394,9 +429,18 @@ Overall, the evidence demonstrates that natural disasters significantly affect b
  - How much do natural disasters affect the U.S. economy? chart
  - Narrative and results of Which U.S. regions experience the highest economic losses from natural disasters? chart
   - Narrative and results of How much do natural disasters affect the U.S. economy? chart
+  - Created slides for above charts
 
 ### Alyssa Girard
  - What disasters cause the most deaths? chart
  - What disasters cause the highest rates of homelessness? chart
  - Narrative and results of What disasters cause the highest rates of homelessness? chart
  - Narrative and results of What disasters cause the most deaths? chart
+ - Created slides for above charts
+ 
+ 
+## Appendix: Data Dictionary
+```{r}
+knitr::kable(data_dictionary)
+```
+
