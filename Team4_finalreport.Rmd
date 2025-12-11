@@ -26,40 +26,155 @@ library(scales)
 library(grid)
 library(lubridate)
 library(sf)
+library(readxl)
 ```
 
 ## Introduction
-### How Do Hurricanes, Wildfires, and Floods Affect Human Welfare and Economics in the United States?
-  Communities across the United States face increasing and ongoing disaster risks, resulting in impacts on how individuals live and the economic growth potential of those communities. This study aims to answer the question: How do hurricanes, wildfires, and floods affect human welfare and economics in the United States? These hazards represent the largest volume and most expensive disasters in our nation. As climate change increases their frequency and intensity, it is essential to assess the detrimental impacts they create. The information gained from examining the residual impacts of these natural disasters will help identify the areas in our country likely to be most adversely affected and the demographic groups that will bear the greatest risks. The results will provide the information needed to establish policies and plans to prepare for future natural disasters.
+### How Does Extreme Weather, Wildfires, and Floods Affect Human Welfare and Economics in the United States?
+  Communities across the United States face increasing and ongoing disaster risks, resulting in impacts on how individuals live and the economic growth potential of those communities. This study aims to answer the question: How do extreme weather affect human welfare and economics in the United States? These hazards represent the largest volume and most expensive disasters in our nation. As climate change increases their frequency and intensity, it is essential to assess the detrimental impacts they create. The information gained from examining the residual impacts of these natural disasters will help identify the areas in our country likely to be most adversely affected and the demographic groups that will bear the greatest risks. The results will provide the information needed to establish policies and plans to prepare for future natural disasters.
 
   To answer this complex question, we developed several follow-up questions that examine different dimensions of human and economic impact. We asked how rates of respiratory symptoms change after natural disasters, as disasters can disrupt air quality, healthcare access, and environmental conditions. Next, we evaluated how much natural disasters affect the U.S. economy by examining inflation-adjusted damages over time. Because damages vary widely across the country, we also asked which U.S. regions experience the highest economic losses, allowing us to assess geographic exposure and vulnerability. Finally, we investigated which disasters cause the most deaths and which result in the highest rates of homelessness, two key indicators of how disasters directly affect human lives and long-term community stability.
 
-  Together, these follow-up questions allow us to examine the problem from multiple angles: health, mortality, homelessness, geography, and financial loss. By combining these perspectives, we can better understand how hurricanes, wildfires, and floods shape human welfare and economic resilience across the United States.
+  Together, these follow-up questions allow us to examine the problem from multiple angles: health, mortality, homelessness, geography, and financial loss. By combining these perspectives, we can better understand how extreme weathers shape human welfare and economic resilience across the United States. 
 
 ## Data & Data Sources
 ### Natural Disasters: Our World in Data
-- Our first data source is from Our World in Data's Natural Disasters dataset
-- It contains data from multiple types of disasters and impacts (e.g., deaths, injuries, homeless, et cetera) and the year the disaster occurred.
-- We believe this data source is valid, because Our World In Data gets their data from valid sources, listed on their website as "international institutions and statistical agencies, such as the OECD, the World Bank, the WHO, and UN institutions, specialized institutes and think tanks, such as the Peace Research Institute Oslo (PRIO), academic research articles, such as Bourguignon & Morrison (2002) ’Inequality Among World Citizens: 1820-1992’ in the American Economic Review, and official data from government sources."
+- Our first data source is from Our World in Data's Natural Disasters dataset.
+- It contains data from multiple types of disasters and impacts (e.g., deaths, injuries, homelessness, etc.) and the year each disaster occurred.
+- This dataset is pre-processed by Our World in Data. They aggregate information from several major institutions rather than collecting it themselves.
+- Their data originates from internationally recognized sources including the OECD, World Bank, WHO, United Nations agencies, research institutes such as PRIO, peer-reviewed academic publications, and official government statistics.
+- Possible limitations:
+  - Some countries and years may have missing or incomplete disaster reporting. (double check before adding this one)
+  - Mortality and impact data may vary depending on historical reporting quality.
+  - Combining different disaster types into categories (e.g., “extreme weather”) may introduce classification bias.
 - Link: https://ourworldindata.org/natural-disasters#explore-data-on-natural-disasters
 
 ### Losses from Natural Disasters: Federal Reserve Bank of New York
-- Our second data source is the Federal Reserve Bank of New York's Losses from Natural Disasters, which describes the direct damages from natural disasters across the United States by county.
-- We believe this data source is valid because it is from a federal resource, specifically the Federal Reserve Bank of New York.
+- Our second data source is the Federal Reserve Bank of New York’s Losses from Natural Disasters dataset, which describes direct economic damages from natural disasters across U.S. counties.
+- The dataset uses pre-processed county-level damage estimates developed by the NY Fed using FEMA, insurance filings, federal declarations, and historical disaster records.
+- Validity Considerations:
+  - Damage values are inflation-adjusted and standardized, making them reliable for long-term comparison.
+  - Some counties may underreport damages, especially rural or low-population areas.
+  - Economic loss calculations involve modeling and estimation, so values may contain measurement bias or uncertainty.
+- Because this dataset is maintained by a federal institution, it is considered a high-credibility data source.
 - Link: https://www.newyorkfed.org/research/policy/natural-disaster-losses/#interactive
 
 ### A Weekly Influenza Surveillance Report: CDC
-- Our third data source is the CDC's Weekly Influenze Surveillance Report, which tracks the level of visits for respiratory illness.
-- We believe this source is valid because it comes directly from the Center of Disease Control, a government organization.
+- Our third data source is the CDC's Weekly Influenza Surveillance Report, which tracks the level of respiratory-related emergency department visits.
+- This dataset is collected directly by the CDC, using hospital networks, clinical laboratories, and physician reporting systems.
+- Data validity considerations:
+  - Reporting is consistent nationwide, but spikes in disease reporting may reflect healthcare access rather than true illness rates.
+  - Some reporting delays or missing data can occur during natural disasters when hospitals are disrupted.
+  - The dataset reflects reported illnesses, not total illnesses, which could introduce systematic undercounting.
+- Because this dataset is maintained by a government organization, it is considered a high-credibility data source.
 - Link: https://gis.cdc.gov/grasp/fluview/main.html
 
 
 ## Results
 ### How do rates of respiratory symptoms change after natural disasters?
 ```{r}
+nc<- read_csv(here("data/OverallCounts_tidy.csv"))
 
+
+nc<- nc[31:52,]
+
+nc <- nc %>% 
+  rename(Covid_like_illness = "COVID-like Illness",
+         RSV_like_illness = "RSV-like Illness") %>% 
+  separate(Week_of, c("Date","Year"), sep = ',') %>% 
+  mutate(total = Covid_like_illness + RSV_like_illness + Influenza) %>% 
+  select(-2)
+
+nc$Date <- as.character(nc$Date)
+nc$Date <- factor(nc$Date, levels=unique(nc$Date))
+
+helene_illness <- ggplot(data = nc, aes(x = Date, y = total))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "North Carolina Respitory Illness Trends in 2024",
+       caption= "Weeks of Hurricane Highlighted in Red")
+
+helene_illness <- helene_illness + annotate("rect", xmin = "September 21", xmax = "October 5", ymin = 0, ymax = 12000,
+             alpha = 0.3, fill = "red") 
+
+helene_illness
 ```
+This line graph illustrates the trend in total emergency department visits for respiratory illnesses over the period before, during, and after Hurricane Helene struck North Carolina. Hurricane Helene made landfall during the week of September 27 2024 and caused severe devastation across the state, resulting in more than 100 fatalities and affecting approximately 40% of North Carolina. Prior to the hurricane’s arrival, respiratory illness visits show a steady downward trend. This decline continues at a similar slope throughout the week of the hurricane and immediately afterward. In the weeks following the event, however, the graph shows an uptick in respiratory illness visits. This increase may be associated with the influx of aid workers, displaced residents, and recovery personnel, which likely created crowded conditions that facilitated the spread of respiratory infections. This follows our prediction that hurricanes would cause an increase in respiratory illnesses due to the rise of homelessness and close contact with others.
 
+```{r}
+Los_ang <- read_csv("data/rv-dashboard.csv")
+
+Los_ang <- Los_ang %>% 
+  mutate(Los_ang = ifelse(is.na(COV_ADM), 0, COV_ADM)) %>% 
+  mutate(Los_ang = ifelse(is.na(FLU_ADM), 0, FLU_ADM)) %>% 
+  mutate(Los_ang = ifelse(is.na(RSV_ADM), 0, RSV_ADM))
+
+LA_sum<- Los_ang %>% 
+  filter(RPHO_REGION == "Los Angeles") %>% 
+  filter(!MMWR_YEAR == "2023") %>% 
+  filter(SEASON == "2024/2025") %>%
+  group_by(WEEKENDING) %>% 
+  summarise(total_ED = COV_ADM + FLU_ADM + RSV_ADM)
+
+LA_summarise <- LA_sum %>% 
+  group_by(WEEKENDING) %>% 
+  summarise(total_ED = sum(total_ED))
+
+LA_summarise <- LA_summarise[-c(27:43),]
+
+last_nine <- tail(LA_summarise, 9)
+remaining_rows <- head(LA_summarise, 26)
+LA_summarise_correct <- rbind(last_nine, remaining_rows)
+
+LA_summarise_correct$WEEKENDING <- as.character(LA_summarise_correct$WEEKENDING)
+LA_summarise_correct$WEEKENDING <- factor(LA_summarise_correct$WEEKENDING, levels=unique(LA_summarise_correct$WEEKENDING))
+
+La_graph <- ggplot(data = LA_summarise_correct, aes(x = WEEKENDING, y = total_ED))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "Los Angeles Respitory Illness Trends in 2025",
+       caption= "Week of Fire Highlighted in Red")
+
+La_graph <- La_graph + annotate("rect", xmin = "01/04/2025", xmax = "01/11/2025", ymin = 0, ymax = 3500,
+             alpha = 0.3, fill = "red")
+
+La_graph
+```
+This line graph illustrates the trend in total emergency department visits for respiratory illnesses before, during, and after the 2025 Los Angeles wildfires. The wildfires began in the Palisades area during the week of January 7, 2025, and caused extensive damage across California, destroying more than 9,000 buildings and burning over 40,000 acres. The graph shows a sudden decline in respiratory-related emergency visits during the week of the wildfires. This decrease is likely due to emergency departments redirecting resources toward treating burn and trauma patients during the disaster. In the week following the wildfires, the graph indicates a slight increase in respiratory illness visits, which is consistent with expected health impacts from smoke exposure and poor air quality. This trend aligns with our prediction that wildfires would lead to an increase in respiratory illnesses; however, additional studies are needed to determine whether this increase is statistically significant. 
+
+```{r}
+texas<- read_excel("data/Weekly_ED_Visits_by_Age_Group_Data.xlsx")
+texas<- texas %>% 
+  filter(GEOGRAPHY == "PHR 8") %>% 
+  filter(str_ends(WEEK_ENDING, "/2025")) %>% 
+  group_by(WEEK_ENDING) %>% 
+  summarise(total = sum(Combined_Count, na.rm = T)) 
+
+texas<- texas[14:46,]
+
+texas_graph <- ggplot(data = texas, aes(x = WEEK_ENDING, y = total))+
+  geom_line(linewidth = 1, na.rm = T, aes(group=1))+
+  geom_point()+
+  theme(axis.text.x = element_text(angle = 45, hjust=1))+
+  labs(x = "Week",
+       y = "Total Emergency Department Visits for Respitory Illnesses",
+       title = "Texas Respitory Illness Trends in 2025",
+       caption= "Week of Flood Highlighted in Red")
+
+
+
+texas_graph <- texas_graph + annotate("rect", xmin = "06/28/2025", xmax = "07/05/2025", ymin = 0, ymax = 1600,
+             alpha = 0.3, fill = "red")
+
+texas_graph
+```
+This line graph depicts the trend in total emergency department visits for respiratory illnesses before, during, and after the 2025 Central Texas floods. The flooding resulted from sudden, significant rainfall across the region, with water levels rising up to 30 feet in some counties. The disaster caused 114 fatalities, left hundreds of people missing, and destroyed thousands of homes. The graph shows relatively stable respiratory illness rates prior to the floods, followed by a slight increase during the event. In the subsequent weeks, there is a notable rise in respiratory illness visits, consistent with the typical seasonal increase that occurs during the fall. Therefore, the uptick observed during the floods is most likely attributable to this annual fall illness pattern rather than the flooding itself. This went against our prediction that flooding would show a significant increase of respiratory illnesses. 
 
 ### How much do natural disasters affect the U.S. economy?
 ```{r}
@@ -107,7 +222,7 @@ ggplot(yearly_losses, aes(
   )
 
 ```
-
+Our trellis plots clearly illustrates how different types of natural disasters contribute unevenly to economic losses in the United States. Hurricanes produce by far the most extreme and volatile damages, with a historic spike in 2005 associated with Hurricane Katrina and other major storms. Flood-related losses fluctuate year to year but remain on a more moderate scale overall. Tornado damages show periodic peaks, including a sharp rise around 2011, which aligns with meteorological records showing 1,282 confirmed tornadoes in 2010 and 1,721 in 2011, one of the most active tornado years in U.S. history. Wildfire losses remain relatively low until the late 2010s, when rising fire severity leads to sharp increases in total damages. Together, these patterns highlight that the nation’s economic burden from natural hazards is driven disproportionately by rare but extremely costly hurricane and wildfire events, while tornado outbreaks contribute major but less frequent spikes. 
 
 ### Which U.S. regions experience the highest economic losses from natural disasters?
 ```{r}
@@ -173,7 +288,7 @@ ggplot(map_data) +
   )
 
 ```
-
+Our choropleth map of cumulative natural disaster damages reveals clear regional patterns in how economic impacts are distributed across the United States. The Gulf Coast; including Texas, Louisiana, Mississippi, Alabama, and Florida, shows consistently high levels of damage, which aligns with our prediction that this region would be the most affected due to frequent hurricanes and large-scale flooding events. The Atlantic Coast and the Northeast also exhibit elevated damages from repeated coastal storm exposure. On the West Coast, particularly in California, cumulative losses reflect the increasing severity and frequency of wildfires, an unexpectedly large economic burden that rivals the damages seen in hurricane, prone areas of the Gulf. In contrast, much of the Midwest and northern interior display substantially lower cumulative damages, with only isolated counties experiencing significant losses. One surprising pattern is the presence of several inland counties that show unexpectedly high damage totals despite being far from the coasts, suggesting that severe localized floods or tornado outbreaks can create greater economic impacts than typically assumed. Overall, the map highlights a clear geographic divide: coastal regions face concentrated and recurrent economic risks, while inland areas tend to experience far fewer high-damage events.
 
 ### What disasters cause the most deaths?
 ```{r}
@@ -225,10 +340,10 @@ ggplot(data=total_data, aes(
     "Earthquake" = "pink",
     "Extreme Weather" = "orange"
   )) +
-  labs(title = "Total Deaths by Disaster Type in the US",
+  labs(title = "Total Deaths by Disaster Type in the US (1900 onward)",
        subtitle = "Floods, Earthquakes, and Extreme Weather (Tornadoes, Hurricanes, etc)")
 ```
-
+The relationship we are investigating in this graph is the relationship between natural disasters and death, specifically extreme weather, floods, and earthquake disasters. The treemap clearly shows evidence of natural disasters being a large cause for death, with a total of almost 37,000 deaths from 1900 to 2025, specifically extreme weather causing the largest amount, earthquakes causing the second largest, and floods last of the three. Looking at the treemap, the dominance of earthquakes in natural disaster deaths is evident, with it causing 31825 deaths out of the 36,759. For our original question, we predicted that floods would cause the most need for assistance. Translating this for our new question into predicting that floods cause the most deaths, our chart disproves our prediction, with extreme weather (i.e. hurricanes and tornadoes) causing the most, with 31,825 deaths while floods had 3,463. One factor we want to take into consideration is that the extreme weather disaster in this dataset is a combination of multiple disasters, which in turn combines the number of deaths from each disaster. We found it interesting that (even while taking into account that extreme weather is multiple disasters combined) floods had a far lower number of deaths than we originally anticipated.
 
 ### What disasters cause the highest numbers of homelessness?
 ```{r}
@@ -253,11 +368,11 @@ ggplot(data = three_types,
   geom_bar(stat = "identity") +
   geom_text(aes(label = total_homeless/10000, vjust = -0.5)) +
   scale_y_continuous(limits = c(0, 125000)) +
-  labs(title = "Cases of Homelessness by Disaster (in tens of thousands)",
+  labs(title = "Cases of Homelessness by Disaster (in tens of thousands, 1900 onwards)",
        x = "Type of Disaster",
        y = "Cases (tens of thousands)")
 ```
-
+The relationship we are investigating in this graph is the relationship between homelessness and natural disasters. Specifically, we are investigating how much three natural disasters (Extreme weather, floods, and wildfires) cause people to become homeless, and comparing the amounts of the three to determine which type causes the most cases of homelessness. We originally predicted that the disasters that would cause the highest rates of homelessness are wildfires and floods. Looking at the chart, floods had the most cases, extreme weather had the second most cases, and wildfire had the least cases. We can see that while our prediction was accurate in that floods do cause the highest numbers of cases of homelessness, in contrast wildfires actually cause the least amount of cases of homelessness. The outcome of wildfires having the least cases was surprising to us, especially considering what we have heard about the January 2025 Los Angeles wildfires. We believe that this could be due to the fact that wildfires often occur in hot, dry regions, which make up a relatively small portion of the United States.
 
 ## Conclusion
 
@@ -265,12 +380,18 @@ ggplot(data = three_types,
 ### Kaya Williams
  - How do rates of respiratory symptoms change after natural disasters?
  charts
+ - Narrative and results of How do rates of respiratory symptoms change after natural disasters?
+ charts
 
 ### Akillesh Suresh
  - Wrote the introduction paragraphs
  - Which U.S. regions experience the highest economic losses from natural disasters? chart
  - How much do natural disasters affect the U.S. economy? chart
+ - Narrative and results of Which U.S. regions experience the highest economic losses from natural disasters? chart
+  - Narrative and results of How much do natural disasters affect the U.S. economy? chart
 
 ### Alyssa Girard
  - What disasters cause the most deaths? chart
  - What disasters cause the highest rates of homelessness? chart
+ - Narrative and results of What disasters cause the highest rates of homelessness? chart
+ - Narrative and results of What disasters cause the most deaths? chart

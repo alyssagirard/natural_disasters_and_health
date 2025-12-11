@@ -78,7 +78,7 @@ ggplot(data=total_data, aes(
     "Extreme Weather" = "orange"
   )) +
   labs(title = "Total Deaths by Disaster Type in the US",
-       subtitle = "Floods, Earthquakes, and Extreme Weather (Tornadoes, Hurricanes, etc)") # maybe g
+       subtitle = "Floods, Earthquakes, and Extreme Weather (Tornadoes, Hurricanes, etc)")
 ```
  
 - The relationship we are investigating is the relationship between natural disasters and death, specifically extreme weather, floods, and wildfire disasters. The visualization does provide evidence as it shows there have been a large amount of deaths due to natural disasters in the United States, specifically extreme weather causing the largest amount, earthquakes causing the second largest, and floods last of the three.
